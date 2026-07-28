@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watts Growth Labs — Invitation-Led Growth Partnerships</title>
+<meta name="description" content="Watts Growth Labs is a human-led growth partnership platform for founders, organizations, and leadership teams seeking sharper positioning, stronger authority, and more meaningful business momentum. Access begins through invitation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-glow" aria-hidden="true"></div>
+  <div class="preloader-noise" aria-hidden="true"></div>
+  <div class="preloader-inner">
+    <div class="preloader-frame">
+      <span class="preloader-mark" id="preloader-mark">WGL</span>
+    </div>
+    <p class="preloader-tag">Invitation-Led Growth Partnerships</p>
+  </div>
+</div>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+
+<!-- Grain overlay -->
+<div class="grain"></div>
+
+<!-- Nav -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-mark" data-goto="0">Watts Growth Labs</a>
+    <a href="#invite" class="nav-cta magnetic" data-magnetic data-goto="1">
+      <span>Apply for the Invite</span>
+    </a>
+  </div>
+</header>
+
+<!-- Slide navigation chrome -->
+<button class="slide-back" id="slide-back" aria-label="Previous section">
+  <span>&larr;</span>
+</button>
+
+<div class="slide-dots" id="slide-dots">
+  <button class="dot active" data-goto="0" aria-label="Go to hero"></button>
+  <button class="dot" data-goto="1" aria-label="Go to invitation"></button>
+  <button class="dot" data-goto="2" aria-label="Go to ecosystem"></button>
+  <button class="dot" data-goto="3" aria-label="Go to request access"></button>
+  <button class="dot" data-goto="4" aria-label="Go to contact"></button>
+</div>
+
+<button class="slide-next" id="slide-next" aria-label="Next section">
+  <span></span>
+  <p>Scroll</p>
+</button>
+
+<div class="curtain" id="curtain" aria-hidden="true"></div>
+
+<main id="slides-wrapper">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero slide" id="hero" data-index="0">
+
+    <!-- layered environment -->
+    <div class="hero-env">
+      <canvas id="grid-canvas"></canvas>
+      <canvas id="particle-canvas"></canvas>
+      <svg id="trajectory-svg" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+        <path id="trajectory-path" d="M -20,560 C 180,540 260,420 380,380 C 520,330 560,220 680,170 C 780,130 850,90 1020,30" />
+        <circle id="trajectory-dot" r="4" cx="-20" cy="560"></circle>
+      </svg>
+      <div class="scan-line"></div>
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+      <div class="layer-panel layer-1" data-depth="0.4"></div>
+      <div class="layer-panel layer-2" data-depth="0.7"></div>
+      <div class="layer-panel layer-3" data-depth="0.2"></div>
+    </div>
+
+    <div class="hero-scrim"></div>
+
+    <div class="hero-content">
+      <p class="eyebrow">Invitation-Led Growth Partnerships</p>
+      <h1 class="hero-title">
+        <span class="mask"><span class="line">For businesses</span></span>
+        <span class="mask"><span class="line">building <em>what's next.</em></span></span>
+      </h1>
+    </div>
+
+    <!-- two pathways -->
+    <div class="hero-actions" id="hero-actions">
+      <a href="#invite" class="btn btn-primary magnetic reveal-fade" data-magnetic data-goto="1">
+        <span>Apply for the Invite</span>
+      </a>
+      <a href="#ecosystem" class="btn btn-ghost magnetic reveal-fade" data-magnetic data-goto="2">
+        <span>Explore Ecosystem</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== INVITATION ===================== -->
+  <section class="invite slide" id="invite" data-index="1">
+    <div class="invite-grid">
+      <div class="invite-copy">
+        <p class="eyebrow">Private Access</p>
+        <h2 class="section-title mask"><span class="line">Not open through public enrollment.</span></h2>
+        <p class="body-text reveal-fade">
+          Partnership access is extended through invitation to businesses, founders, and
+          organizations aligned with the level of growth, positioning, and strategic
+          direction this platform is built for.
+        </p>
+
+        <ul class="benefit-list">
+          <li class="benefit">
+            <span class="benefit-num">01</span>
+            <span class="benefit-rule"></span>
+            <span class="benefit-text">Access a more strategic, human-led partnership model.</span>
+          </li>
+          <li class="benefit">
+            <span class="benefit-num">02</span>
+            <span class="benefit-rule"></span>
+            <span class="benefit-text">Strengthen positioning, authority, and AI-supported growth direction.</span>
+          </li>
+          <li class="benefit">
+            <span class="benefit-num">03</span>
+            <span class="benefit-rule"></span>
+            <span class="benefit-text">Enter a more intentional environment for advisory, rooms, and business opportunities.</span>
+          </li>
+        </ul>
+
+        <a href="mailto:partners@wattsgrowthlabs.com?subject=Invitation%20Request" class="btn btn-primary magnetic reveal-fade" data-magnetic>
+          <span>Apply for the Invite</span>
+        </a>
+      </div>
+
+      <div class="invite-visual">
+        <div class="visual-panel reveal-fade" id="invite-panel">
+          <canvas id="invite-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ECOSYSTEM ===================== -->
+  <section class="ecosystem slide" id="ecosystem" data-index="2">
+    <div class="ecosystem-pin">
+      <div class="ecosystem-visual reveal-fade">
+        <canvas id="ecosystem-canvas"></canvas>
+      </div>
+      <div class="ecosystem-copy">
+        <p class="eyebrow">Built Within The Watts Group Ecosystem</p>
+        <h2 class="section-title mask"><span class="line">One ecosystem.</span></h2>
+        <h2 class="section-title mask"><span class="line">Every layer of growth.</span></h2>
+
+        <p class="body-text reveal-fade">
+          Watts Growth Labs sits within the broader Watts Group ecosystem — an AI-first
+          Canadian consulting and investment group bringing together services, technology,
+          capital, and community. Growth Labs is the human-led partnership layer: strategic
+          judgment, positioning, and media, strengthened by AI where it creates real leverage.
+        </p>
+
+        <a href="https://wattsgroup.in" target="_blank" rel="noopener" class="btn btn-ghost magnetic reveal-fade" data-magnetic>
+          <span>Explore Watts Group</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>POSITIONING</span><span>&mdash;</span>
+        <span>AUTHORITY</span><span>&mdash;</span>
+        <span>CAPITAL</span><span>&mdash;</span>
+        <span>TECHNOLOGY</span><span>&mdash;</span>
+        <span>COMMUNITY</span><span>&mdash;</span>
+        <span>POSITIONING</span><span>&mdash;</span>
+        <span>AUTHORITY</span><span>&mdash;</span>
+        <span>CAPITAL</span><span>&mdash;</span>
+        <span>TECHNOLOGY</span><span>&mdash;</span>
+        <span>COMMUNITY</span><span>&mdash;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="final-cta slide" id="final-cta" data-index="3">
+    <div class="final-cta-inner">
+      <p class="eyebrow">Request Access</p>
+      <h2 class="final-title mask"><span class="line">Access begins with a request.</span></h2>
+      <p class="body-text reveal-fade">
+        A brief conversation determines fit. If aligned, you'll be welcomed into the
+        partnership — on your terms, at your pace.
+      </p>
+      <a href="mailto:partners@wattsgrowthlabs.com?subject=Invitation%20Request" class="btn btn-primary btn-large magnetic reveal-fade" data-magnetic>
+        <span>Apply for the Invite</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER (final slide) ===================== -->
+  <section class="footer slide" id="footer" data-index="4">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-col footer-brand">
+          <p class="footer-mark">Watts Growth Labs</p>
+          <p class="footer-tag">Invitation-led growth partnerships for businesses building what's next.</p>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-heading">Contact</p>
+          <a href="mailto:partners@wattsgrowthlabs.com" class="footer-link">partners@wattsgrowthlabs.com</a>
+          <a href="tel:+15795699999" class="footer-link">+1 (579) 569 9999</a>
+          <a href="https://wa.me/15795699999" target="_blank" rel="noopener" class="footer-link">WhatsApp</a>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-heading">Locations</p>
+          <p class="footer-address">
+            Watts Growth Labs, 1925 18 Ave NE, Suite 115, Calgary, AB T2E 7T8
+          </p>
+          <p class="footer-address">
+            Watts Group Ltd., 120 Traders Blvd E, Suite 209, Mississauga, ON L4Z 2H7
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-heading">Ecosystem</p>
+          <a href="https://wattsgroup.in" target="_blank" rel="noopener" class="footer-link">Watts Group &rarr;</a>
+        </div>
+      </div>
+
+      <div class="footer-map">
+        <iframe src="https://storage.googleapis.com/maps-solutions-u1k0d9gbib/locator-plus/fmaa/locator-plus.html"
+          width="100%" height="100%"
+          style="border:0;"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Watts Growth Labs. Part of the Watts Group ecosystem.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
