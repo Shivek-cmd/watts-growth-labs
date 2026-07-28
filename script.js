@@ -4,70 +4,115 @@ const isTouch = window.matchMedia('(max-width:860px)').matches;
 /* ===================== PRELOADER ===================== */
 window.addEventListener('load', () => {
   const pre = document.getElementById('preloader');
-  const mark = document.getElementById('preloader-mark');
-  const navMark = document.querySelector('.nav-mark');
 
   if (prefersReducedMotion) {
-    setTimeout(() => pre.classList.add('hidden'), 900);
+    setTimeout(() => pre.remove(), 900);
     return;
   }
 
-  navMark.style.opacity = '0';
-
   setTimeout(() => {
-    const markRect = mark.getBoundingClientRect();
-    const markStyle = getComputedStyle(mark);
-    const startFontSize = parseFloat(markStyle.fontSize);
-
-    document.body.appendChild(mark);
-    Object.assign(mark.style, {
-      position: 'fixed',
-      left: markRect.left + 'px',
-      top: markRect.top + 'px',
-      width: markRect.width + 'px',
-      height: markRect.height + 'px',
-      margin: '0',
-      zIndex: '10000',
-      animation: 'none',
-    });
-
-    pre.classList.add('hidden');
-
-    const navRect = navMark.getBoundingClientRect();
-    const navStyle = getComputedStyle(navMark);
-    const scale = parseFloat(navStyle.fontSize) / startFontSize;
-    const dx = (navRect.left + navRect.width / 2) - (markRect.left + markRect.width / 2);
-    const dy = (navRect.top + navRect.height / 2) - (markRect.top + markRect.height / 2);
-
-    gsap.to(mark, {
-      x: dx,
-      y: dy,
-      scale,
-      letterSpacing: navStyle.letterSpacing,
-      color: navStyle.color,
-      duration: 1,
+    gsap.to(pre, {
+      y: '-100%',
+      duration: 1.1,
       ease: 'power3.inOut',
-      delay: 0.1,
-      onComplete: () => {
-        navMark.style.opacity = '';
-        mark.remove();
-        pre.remove();
-      },
+      onComplete: () => pre.remove(),
     });
-  }, 1650);
+  }, 2900);
 });
 
-/* ===================== CUSTOM CURSOR ===================== */
-const cursor = document.getElementById('cursor');
-if (!isTouch) {
+/* ===================== CURSOR DUST TRAIL ===================== */
+function initCursorDust() {
+  if (isTouch || prefersReducedMotion) return;
+  const canvas = document.getElementById('cursor-dust');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const goldHex = getComputedStyle(document.documentElement).getPropertyValue('--bronze').trim() || '#c9a15e';
+  const clean = goldHex.replace('#', '');
+  const baseRgb = {
+    r: parseInt(clean.substring(0, 2), 16),
+    g: parseInt(clean.substring(2, 4), 16),
+    b: parseInt(clean.substring(4, 6), 16),
+  };
+  const goldRgb = baseRgb;
+
+  function resize() {
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let particles = [];
+  let lastX = null, lastY = null;
+  const STEP = 24; // px between puffs along the travelled path — keeps the trail gapless at any cursor speed
+
+  function spawn(x, y, vx, vy) {
+    particles.push({
+      x: x + (Math.random() - 0.5) * 6,
+      y: y + (Math.random() - 0.5) * 6,
+      vx: vx + (Math.random() - 0.5) * 0.3,
+      vy: vy + (Math.random() - 0.5) * 0.3,
+      r: 40 + Math.random() * 18,
+      maxR: 60 + Math.random() * 24,
+      life: 1,
+      decay: Math.random() * 0.008 + 0.012,
+    });
+    if (particles.length > 90) particles.shift();
+  }
+
   window.addEventListener('mousemove', (e) => {
-    gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.15, ease: 'power2.out' });
+    if (lastX === null) {
+      spawn(e.clientX, e.clientY, 0, 0);
+      lastX = e.clientX;
+      lastY = e.clientY;
+      return;
+    }
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    const dist = Math.hypot(dx, dy);
+    const steps = Math.max(1, Math.round(dist / STEP));
+    const vx = dx * 0.12;
+    const vy = dy * 0.12;
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps;
+      spawn(lastX + dx * t, lastY + dy * t, vx, vy);
+    }
+    lastX = e.clientX;
+    lastY = e.clientY;
   });
-  document.querySelectorAll('a, button, .magnetic').forEach((el) => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-  });
+
+  function frame() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    ctx.globalCompositeOperation = 'lighter';
+    particles.forEach((p) => {
+      p.vx *= 0.94;
+      p.vy *= 0.94;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) return;
+      const eased = 1 - Math.pow(p.life, 2);
+      const grown = p.r + (p.maxR - p.r) * eased;
+      const alpha = p.life * 0.07;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, grown);
+      grad.addColorStop(0, `rgba(${goldRgb.r},${goldRgb.g},${goldRgb.b},${alpha})`);
+      grad.addColorStop(1, `rgba(${goldRgb.r},${goldRgb.g},${goldRgb.b},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, grown, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+    particles = particles.filter((p) => p.life > 0);
+    requestAnimationFrame(frame);
+  }
+  frame();
 }
+initCursorDust();
 
 /* ===================== MAGNETIC BUTTONS ===================== */
 if (!isTouch) {
@@ -104,7 +149,6 @@ initSlides();
 function updateChrome() {
   document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
   document.getElementById('slide-back').classList.toggle('visible', current > 0);
-  document.getElementById('slide-next').classList.toggle('hidden', current === slides.length - 1);
 }
 updateChrome();
 
@@ -155,14 +199,15 @@ function flipTransition(leaving, entering, leavingIndex, index, finish) {
   const d = prefersReducedMotion ? 0.01 : DUR;
   const dir = index > leavingIndex ? 1 : -1;
 
+  gsap.set([leaving, entering], { backfaceVisibility: 'hidden' });
   gsap.set(leaving, { rotateY: 0, opacity: 1, zIndex: slides.length + 1 });
   gsap.set(entering, { rotateY: dir * 90, opacity: 0, zIndex: slides.length + 2 });
 
   const tl = gsap.timeline({
     defaults: { duration: d, ease: 'power3.inOut' },
     onComplete: () => {
-      gsap.set(leaving, { rotateY: 0, opacity: 0, zIndex: leavingIndex + 1 });
-      gsap.set(entering, { rotateY: 0, zIndex: index + 1 });
+      gsap.set(leaving, { rotateY: 0, opacity: 0, zIndex: leavingIndex + 1, backfaceVisibility: 'visible' });
+      gsap.set(entering, { rotateY: 0, zIndex: index + 1, backfaceVisibility: 'visible' });
       finish();
     },
   });
@@ -188,6 +233,17 @@ function scaleTransition(leaving, entering, leavingIndex, index, finish) {
   tl.to(entering, { scale: 1, opacity: 1, borderRadius: '0px', duration: d * 0.62, ease: 'power3.out' }, d * 0.42);
 }
 
+let formHighlightTimeout = null;
+function highlightInviteForm() {
+  const form = document.getElementById('invite-form');
+  if (!form) return;
+  clearTimeout(formHighlightTimeout);
+  form.classList.remove('form-highlight');
+  void form.offsetWidth; // restart the animation if it's already mid-run
+  form.classList.add('form-highlight');
+  formHighlightTimeout = setTimeout(() => form.classList.remove('form-highlight'), 2100);
+}
+
 function goTo(index) {
   if (index < 0 || index > slides.length - 1 || index === current || animating) return;
   animating = true;
@@ -203,6 +259,7 @@ function goTo(index) {
     current = index;
     updateChrome();
     playEnter(current);
+    if (index === 1) highlightInviteForm();
   };
 
   const pairKey = [leavingIndex, index].sort((a, b) => a - b).join('-');
@@ -259,7 +316,6 @@ window.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('slide-back').addEventListener('click', () => goTo(current - 1));
-document.getElementById('slide-next').addEventListener('click', () => goTo(current + 1));
 document.querySelectorAll('[data-goto]').forEach((el) => {
   el.addEventListener('click', (e) => {
     e.preventDefault();
@@ -289,8 +345,8 @@ function enterInvite() {
   gsap.to(inviteEl.querySelectorAll('.eyebrow'), { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 });
   gsap.to(inviteEl.querySelectorAll('.mask .line'), { y: '0%', duration: 1.1, ease: 'power4.out', delay: 0.25 });
   gsap.to(inviteEl.querySelectorAll('.reveal-fade'), { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.5 });
-  inviteEl.querySelectorAll('.benefit').forEach((b, i) => {
-    setTimeout(() => b.classList.add('in-view'), 700 + i * 120);
+  gsap.to(inviteEl.querySelectorAll('.form-field, .invite-form .btn'), {
+    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1, delay: 1.1,
   });
 }
 
@@ -308,9 +364,37 @@ function enterFinal() {
 
 function enterFooter() {
   gsap.to(footerEl.querySelector('.footer-inner'), { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.15 });
+  gsap.to(footerEl.querySelectorAll('.footer-col'), {
+    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.35,
+  });
 }
 
 playEnter(0);
+
+/* ===================== INVITE FORM ===================== */
+const inviteForm = document.getElementById('invite-form');
+if (inviteForm) {
+  inviteForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!inviteForm.checkValidity()) {
+      inviteForm.reportValidity();
+      return;
+    }
+
+    const success = document.getElementById('invite-form-success');
+    gsap.to(inviteForm, {
+      opacity: 0,
+      y: -10,
+      duration: 0.4,
+      ease: 'power2.out',
+      onComplete: () => {
+        inviteForm.style.display = 'none';
+        success.classList.add('visible');
+        gsap.fromTo(success, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
+      },
+    });
+  });
+}
 
 /* ===================== CANVAS SETUP HELPER ===================== */
 function setupCanvas(canvas) {
@@ -468,62 +552,7 @@ function initTrajectory() {
   }
 }
 
-/* ===================== CANVAS: soft drifting gradient blobs (invite / ecosystem) ===================== */
-function initBlobCanvas(id, hue) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
-  const { ctx } = setupCanvas(canvas);
-  let W, H;
-  function dims() { W = canvas.parentElement.clientWidth; H = canvas.parentElement.clientHeight; }
-  dims();
-  window.addEventListener('resize', dims);
-
-  const blobs = Array.from({ length: 3 }, (_, i) => ({
-    x: Math.random(),
-    y: Math.random(),
-    r: 0.35 + Math.random() * 0.25,
-    t: Math.random() * 1000,
-    speed: 0.0025 + Math.random() * 0.002,
-    hue: hue + i * 12,
-  }));
-
-  function frame() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f0f11';
-    ctx.fillRect(0, 0, W, H);
-
-    blobs.forEach((b) => {
-      b.t += b.speed;
-      const x = (0.5 + Math.sin(b.t) * 0.28) * W;
-      const y = (0.5 + Math.cos(b.t * 0.8) * 0.28) * H;
-      const r = b.r * Math.max(W, H);
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-      grad.addColorStop(0, `hsla(${b.hue}, 55%, 55%, 0.16)`);
-      grad.addColorStop(1, 'hsla(0,0%,0%,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-    ctx.lineWidth = 1;
-    const step = 40;
-    for (let x = 0; x < W; x += step) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += step) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
-
-    requestAnimationFrame(frame);
-  }
-  frame();
-}
-
 initGridCanvas();
 initParticleCanvas();
 initTrajectory();
 initLayerParallax();
-initBlobCanvas('invite-canvas', 38);
-initBlobCanvas('ecosystem-canvas', 30);

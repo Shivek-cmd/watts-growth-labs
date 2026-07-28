@@ -24,21 +24,11 @@
   </div>
 </div>
 
-<!-- Custom cursor -->
-<div class="cursor" id="cursor"></div>
+<!-- Cursor dust trail -->
+<canvas id="cursor-dust" aria-hidden="true"></canvas>
 
 <!-- Grain overlay -->
 <div class="grain"></div>
-
-<!-- Nav -->
-<header class="nav">
-  <div class="nav-inner">
-    <a href="#hero" class="nav-mark" data-goto="0">Watts Growth Labs</a>
-    <a href="#invite" class="nav-cta magnetic" data-magnetic data-goto="1">
-      <span>Apply for the Invite</span>
-    </a>
-  </div>
-</header>
 
 <!-- Slide navigation chrome -->
 <button class="slide-back" id="slide-back" aria-label="Previous section">
@@ -53,10 +43,6 @@
   <button class="dot" data-goto="4" aria-label="Go to contact"></button>
 </div>
 
-<button class="slide-next" id="slide-next" aria-label="Next section">
-  <span></span>
-  <p>Scroll</p>
-</button>
 
 <div class="curtain" id="curtain" aria-hidden="true"></div>
 
@@ -117,29 +103,45 @@
         <ul class="benefit-list">
           <li class="benefit">
             <span class="benefit-num">01</span>
-            <span class="benefit-rule"></span>
             <span class="benefit-text">Access a more strategic, human-led partnership model.</span>
           </li>
           <li class="benefit">
             <span class="benefit-num">02</span>
-            <span class="benefit-rule"></span>
             <span class="benefit-text">Strengthen positioning, authority, and AI-supported growth direction.</span>
           </li>
           <li class="benefit">
             <span class="benefit-num">03</span>
-            <span class="benefit-rule"></span>
             <span class="benefit-text">Enter a more intentional environment for advisory, rooms, and business opportunities.</span>
           </li>
         </ul>
-
-        <a href="mailto:partners@wattsgrowthlabs.com?subject=Invitation%20Request" class="btn btn-primary magnetic reveal-fade" data-magnetic>
-          <span>Apply for the Invite</span>
-        </a>
       </div>
 
       <div class="invite-visual">
-        <div class="visual-panel reveal-fade" id="invite-panel">
-          <canvas id="invite-canvas"></canvas>
+        <form class="invite-form reveal-fade" id="invite-form" novalidate>
+          <p class="form-eyebrow">Request Access</p>
+          <h3 class="form-heading">Start your application</h3>
+          <p class="form-desc">Share a few details and our team will follow up to confirm fit for partnership.</p>
+
+          <label class="form-field">
+            <input type="text" name="name" placeholder="Full name" required>
+          </label>
+          <label class="form-field">
+            <input type="email" name="email" placeholder="Email address" required>
+          </label>
+          <label class="form-field">
+            <input type="tel" name="phone" placeholder="Phone number" required>
+          </label>
+          <label class="form-field">
+            <input type="text" name="business" placeholder="Business name">
+          </label>
+          <button type="submit" class="btn btn-primary magnetic" data-magnetic>
+            <span>Submit Application</span>
+          </button>
+        </form>
+
+        <div class="form-success" id="invite-form-success">
+          <span class="form-success-mark">&#10003;</span>
+          <p>Thank you — your invitation request has been received. We'll be in touch shortly.</p>
         </div>
       </div>
     </div>
@@ -148,9 +150,6 @@
   <!-- ===================== ECOSYSTEM ===================== -->
   <section class="ecosystem slide" id="ecosystem" data-index="2">
     <div class="ecosystem-pin">
-      <div class="ecosystem-visual reveal-fade">
-        <canvas id="ecosystem-canvas"></canvas>
-      </div>
       <div class="ecosystem-copy">
         <p class="eyebrow">Built Within The Watts Group Ecosystem</p>
         <h2 class="section-title mask"><span class="line">One ecosystem.</span></h2>
@@ -194,7 +193,7 @@
         A brief conversation determines fit. If aligned, you'll be welcomed into the
         partnership — on your terms, at your pace.
       </p>
-      <a href="mailto:partners@wattsgrowthlabs.com?subject=Invitation%20Request" class="btn btn-primary btn-large magnetic reveal-fade" data-magnetic>
+      <a href="#invite" class="btn btn-primary btn-large magnetic reveal-fade" data-magnetic data-goto="1">
         <span>Apply for the Invite</span>
       </a>
     </div>
@@ -202,22 +201,24 @@
 
   <!-- ===================== FOOTER (final slide) ===================== -->
   <section class="footer slide" id="footer" data-index="4">
+    <div class="footer-glow" aria-hidden="true"></div>
     <div class="footer-inner">
       <div class="footer-top">
         <div class="footer-col footer-brand">
           <p class="footer-mark">Watts Growth Labs</p>
+          <span class="footer-rule"></span>
           <p class="footer-tag">Invitation-led growth partnerships for businesses building what's next.</p>
         </div>
 
         <div class="footer-col">
-          <p class="footer-heading">Contact</p>
-          <a href="mailto:partners@wattsgrowthlabs.com" class="footer-link">partners@wattsgrowthlabs.com</a>
-          <a href="tel:+15795699999" class="footer-link">+1 (579) 569 9999</a>
-          <a href="https://wa.me/15795699999" target="_blank" rel="noopener" class="footer-link">WhatsApp</a>
+          <p class="footer-heading">Contact<span class="footer-heading-rule"></span></p>
+          <a href="mailto:partners@wattsgrowthlabs.com" class="footer-link"><span>partners@wattsgrowthlabs.com</span></a>
+          <a href="tel:+15795699999" class="footer-link"><span>+1 (579) 569 9999</span></a>
+          <a href="https://wa.me/15795699999" target="_blank" rel="noopener" class="footer-link"><span>WhatsApp</span></a>
         </div>
 
         <div class="footer-col">
-          <p class="footer-heading">Locations</p>
+          <p class="footer-heading">Locations<span class="footer-heading-rule"></span></p>
           <p class="footer-address">
             Watts Growth Labs, 1925 18 Ave NE, Suite 115, Calgary, AB T2E 7T8
           </p>
@@ -227,17 +228,9 @@
         </div>
 
         <div class="footer-col">
-          <p class="footer-heading">Ecosystem</p>
-          <a href="https://wattsgroup.in" target="_blank" rel="noopener" class="footer-link">Watts Group &rarr;</a>
+          <p class="footer-heading">Ecosystem<span class="footer-heading-rule"></span></p>
+          <a href="https://wattsgroup.in" target="_blank" rel="noopener" class="footer-link"><span>Watts Group &rarr;</span></a>
         </div>
-      </div>
-
-      <div class="footer-map">
-        <iframe src="https://storage.googleapis.com/maps-solutions-u1k0d9gbib/locator-plus/fmaa/locator-plus.html"
-          width="100%" height="100%"
-          style="border:0;"
-          loading="lazy">
-        </iframe>
       </div>
 
       <div class="footer-bottom">
