@@ -618,7 +618,7 @@ img{display:block;max-width:100%;}
 
 /* ===================== FOOTER (slide) ===================== */
 .footer{
-  display:flex;align-items:flex-start;
+  display:flex;align-items:center;
   background:var(--bg-soft);
   padding:7rem 3rem 3.5rem;
 }
