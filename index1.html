@@ -276,6 +276,7 @@ img{display:block;max-width:100%;}
   width:100%;
   height:100%;
   overflow-y:auto;
+  overflow-x:hidden;
   scrollbar-width:none;
 }
 .slide::-webkit-scrollbar{display:none;}
@@ -293,7 +294,7 @@ img{display:block;max-width:100%;}
   display:flex;
   flex-direction:column;
   align-items:flex-start;
-  justify-content:flex-start;
+  justify-content:center;
   background:var(--bg-soft);
   padding:8.5rem 5rem 3.5rem;
 }
@@ -407,10 +408,10 @@ img{display:block;max-width:100%;}
 }
 
 @media (max-width:1024px){
-  .hero{padding:7.5rem 2.5rem 3rem;}
+  .hero{padding:7.5rem 2.5rem 3rem;justify-content:center;}
 }
 @media (max-width:767px){
-  .hero{padding:6.5rem 1.25rem 3rem;}
+  .hero{padding:6.5rem 1.25rem 3rem;justify-content:center;}
   .hero-actions{flex-direction:column;width:100%;max-width:320px;}
   .hero-actions .btn{width:100%;justify-content:center;}
 }
@@ -421,6 +422,19 @@ img{display:block;max-width:100%;}
 }
 @media (min-width:1440px){
   .hero{padding:9.5rem 6.5rem 4rem;}
+}
+
+/* ---- short desktop viewports (laptops with browser chrome, small windows):
+   shrink the title/padding so the whole hero fits without an internal scroll ---- */
+@media (min-width:1025px) and (max-height:820px){
+  .hero{padding:5.5rem 5rem 2.25rem;}
+  .hero-title{font-size:clamp(3.4rem,8.5vw,7rem);}
+  .hero-actions{margin-top:1.75rem;}
+}
+@media (min-width:1025px) and (max-height:650px){
+  .hero{padding:4rem 5rem 1.75rem;}
+  .hero-title{font-size:clamp(2.8rem,7vw,5.4rem);}
+  .hero-actions{margin-top:1.25rem;}
 }
 
 /* ===================== INVITE ===================== */
@@ -575,17 +589,42 @@ img{display:block;max-width:100%;}
 }
 
 @media (max-width:1024px){
-  .invite{padding:7rem 1.5rem 3rem;}
+  .invite{padding:9.5rem 1.5rem 3rem;}
   .invite-grid{grid-template-columns:1fr;gap:2rem;}
   .invite-visual{order:-1;}
 }
+@media (max-width:767px){
+  .invite{padding:8.75rem 1.5rem 3rem;}
+}
 @media (max-width:480px){
-  .invite{padding:6rem 1rem 2.5rem;}
+  .invite{padding:8rem 1rem 2.5rem;}
   .invite-form{padding:1.5rem;}
   .form-heading{font-size:1.3rem;}
 }
 @media (min-width:1440px){
   .invite{padding:9rem 4rem 6rem;}
+}
+
+/* ---- invite form, split onto its own slide on tablet/mobile ---- */
+.invite-form-section{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+}
+.invite-form-slide-inner{
+  width:100%;
+  max-width:480px;
+  margin:0 auto;
+}
+@media (max-width:1024px){
+  .invite-form-section{display:flex;padding:9.5rem 1.5rem 3rem;}
+}
+@media (max-width:767px){
+  .invite-form-section{padding:8.75rem 1.5rem 3rem;}
+}
+@media (max-width:480px){
+  .invite-form-section{padding:8rem 1rem 2.5rem;}
 }
 
 /* ===================== ECOSYSTEM ===================== */
@@ -819,13 +858,7 @@ img{display:block;max-width:100%;}
   <span>&larr;</span>
 </button>
 
-<div class="slide-dots" id="slide-dots">
-  <button class="dot active" data-goto="0" aria-label="Go to hero"></button>
-  <button class="dot" data-goto="1" aria-label="Go to invitation"></button>
-  <button class="dot" data-goto="2" aria-label="Go to ecosystem"></button>
-  <button class="dot" data-goto="3" aria-label="Go to request access"></button>
-  <button class="dot" data-goto="4" aria-label="Go to contact"></button>
-</div>
+<div class="slide-dots" id="slide-dots"></div>
 
 
 <div class="curtain" id="curtain" aria-hidden="true"></div>
@@ -900,7 +933,7 @@ img{display:block;max-width:100%;}
         </ul>
       </div>
 
-      <div class="invite-visual">
+      <div class="invite-visual" id="invite-visual">
         <form class="invite-form reveal-fade" id="invite-form" novalidate>
           <p class="form-eyebrow">Request Access</p>
           <h3 class="form-heading">Start your application</h3>
@@ -929,6 +962,11 @@ img{display:block;max-width:100%;}
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ===================== INVITATION FORM (mobile/tablet split) ===================== -->
+  <section class="invite-form-section slide" id="invite-form-section">
+    <div class="invite-form-slide-inner" id="invite-form-mobile-host"></div>
   </section>
 
   <!-- ===================== ECOSYSTEM ===================== -->
@@ -1159,9 +1197,33 @@ if (!isTouch) {
 }
 
 /* ===================== SLIDE DECK CONTROLLER ===================== */
-const slides = Array.from(document.querySelectorAll('.slide'));
-const heroEl = slides[0], inviteEl = slides[1], ecosystemEl = slides[2], finalEl = slides[3], footerEl = slides[4];
+const heroEl = document.getElementById('hero');
+const inviteEl = document.getElementById('invite');
+const inviteFormEl = document.getElementById('invite-form-section');
+const ecosystemEl = document.getElementById('ecosystem');
+const finalEl = document.getElementById('final-cta');
+const footerEl = document.getElementById('footer');
 
+// Below the tablet breakpoint, the invite form moves out of the two-column
+// .invite slide and into its own slide (inviteFormEl) so it isn't cramped
+// into the same fixed-height screen as the copy above it.
+const inviteGrid = document.querySelector('.invite-grid');
+const inviteVisual = document.getElementById('invite-visual');
+const inviteFormMobileHost = document.getElementById('invite-form-mobile-host');
+function isMobileSplit() { return window.matchMedia('(max-width:1024px)').matches; }
+function placeInviteVisual() {
+  const target = isMobileSplit() ? inviteFormMobileHost : inviteGrid;
+  if (inviteVisual.parentElement !== target) target.appendChild(inviteVisual);
+}
+
+function computeActiveSlides() {
+  return Array.from(document.querySelectorAll('#slides-wrapper > .slide')).filter((el) => {
+    if (el === inviteFormEl) return isMobileSplit();
+    return true;
+  });
+}
+
+let slides = [];
 let current = 0;
 let animating = false;
 const DUR = 1.5;
@@ -1173,13 +1235,33 @@ function initSlides() {
     s.style.pointerEvents = i === 0 ? 'auto' : 'none';
   });
 }
-initSlides();
+
+const DOT_LABELS = {
+  hero: 'Go to hero',
+  invite: 'Go to invitation',
+  'invite-form-section': 'Go to invitation form',
+  ecosystem: 'Go to ecosystem',
+  'final-cta': 'Go to request access',
+  footer: 'Go to contact',
+};
 
 function updateChrome() {
   document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
   document.getElementById('slide-back').classList.toggle('visible', current > 0);
 }
-updateChrome();
+
+function rebuildDots() {
+  const container = document.getElementById('slide-dots');
+  container.innerHTML = '';
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot';
+    b.dataset.goto = i;
+    b.setAttribute('aria-label', DOT_LABELS[s.id] || ('Go to section ' + (i + 1)));
+    b.addEventListener('click', (e) => { e.preventDefault(); goTo(i); });
+    container.appendChild(b);
+  });
+}
 
 /* ---- transition: iris / clip-path reveal ---- */
 function irisTransition(leaving, entering, leavingIndex, index, finish) {
@@ -1262,6 +1344,16 @@ function scaleTransition(leaving, entering, leavingIndex, index, finish) {
   tl.to(entering, { scale: 1, opacity: 1, borderRadius: '0px', duration: d * 0.62, ease: 'power3.out' }, d * 0.42);
 }
 
+function transitionFor(elA, elB) {
+  const key = [elA.id, elB.id].sort().join('__');
+  const special = {
+    [[heroEl.id, inviteEl.id].sort().join('__')]: irisTransition,
+    [[ecosystemEl.id, finalEl.id].sort().join('__')]: flipTransition,
+    [[finalEl.id, footerEl.id].sort().join('__')]: scaleTransition,
+  };
+  return special[key] || curtainTransition;
+}
+
 let formHighlightTimeout = null;
 function highlightInviteForm() {
   const form = document.getElementById('invite-form');
@@ -1287,19 +1379,11 @@ function goTo(index) {
     animating = false;
     current = index;
     updateChrome();
-    playEnter(current);
-    if (index === 1) highlightInviteForm();
+    playEnter(entering);
+    if (entering === inviteFormEl || (entering === inviteEl && !isMobileSplit())) highlightInviteForm();
   };
 
-  const pairKey = [leavingIndex, index].sort((a, b) => a - b).join('-');
-  const transitions = {
-    '0-1': irisTransition,
-    '1-2': curtainTransition,
-    '2-3': flipTransition,
-    '3-4': scaleTransition,
-  };
-  const run = transitions[pairKey] || scaleTransition;
-  run(leaving, entering, leavingIndex, index, finish);
+  transitionFor(leaving, entering)(leaving, entering, leavingIndex, index, finish);
 }
 
 /* ---- input: wheel, touch, keyboard, explicit controls ---- */
@@ -1345,19 +1429,60 @@ window.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('slide-back').addEventListener('click', () => goTo(current - 1));
-document.querySelectorAll('[data-goto]').forEach((el) => {
+
+function bindGotoAnchor(el) {
   el.addEventListener('click', (e) => {
     e.preventDefault();
-    goTo(parseInt(el.dataset.goto, 10));
+    const href = el.getAttribute('href');
+    let targetEl = href && href.startsWith('#') ? document.getElementById(href.slice(1)) : null;
+    // "Apply for the Invite" links point at the copy slide, but once the form
+    // has its own slide (mobile/tablet split) that's where the click should land.
+    if (targetEl === inviteEl && isMobileSplit()) targetEl = inviteFormEl;
+    const idx = targetEl ? slides.indexOf(targetEl) : parseInt(el.dataset.goto, 10);
+    if (idx >= 0) goTo(idx);
   });
+}
+document.querySelectorAll('a[data-goto]').forEach(bindGotoAnchor);
+
+/* ---- build the slide list, then keep it in sync if the viewport crosses the split breakpoint ---- */
+function setupSlides(preserveEl) {
+  const prevActiveEl = preserveEl || slides[current] || heroEl;
+  slides = computeActiveSlides();
+  let idx = slides.indexOf(prevActiveEl);
+  if (idx === -1) idx = slides.indexOf(inviteEl);
+  if (idx === -1) idx = 0;
+  current = idx;
+  initSlides();
+  gsap.set(slides[current], { opacity: 1, zIndex: current + 1 });
+  slides[current].style.pointerEvents = 'auto';
+  rebuildDots();
+  updateChrome();
+}
+
+placeInviteVisual();
+setupSlides(heroEl);
+
+let lastMobileSplit = isMobileSplit();
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const nowSplit = isMobileSplit();
+    if (nowSplit === lastMobileSplit) return;
+    lastMobileSplit = nowSplit;
+    const activeEl = slides[current];
+    placeInviteVisual();
+    setupSlides(activeEl);
+  }, 150);
 });
 
 /* ===================== PER-SLIDE ENTER ANIMATIONS (play once) ===================== */
 const visited = new Set();
-function playEnter(i) {
-  if (visited.has(i)) return;
-  visited.add(i);
-  const fn = [enterHero, enterInvite, enterEcosystem, enterFinal, enterFooter][i];
+const enterFnByEl = new Map();
+function playEnter(el) {
+  if (!el || visited.has(el)) return;
+  visited.add(el);
+  const fn = enterFnByEl.get(el);
   fn && fn();
 }
 
@@ -1376,6 +1501,13 @@ function enterInvite() {
   gsap.to(inviteEl.querySelectorAll('.reveal-fade'), { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.5 });
   gsap.to(inviteEl.querySelectorAll('.form-field, .invite-form .btn'), {
     opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1, delay: 1.1,
+  });
+}
+
+function enterInviteForm() {
+  gsap.to(inviteFormEl.querySelectorAll('.reveal-fade'), { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.1 });
+  gsap.to(inviteFormEl.querySelectorAll('.form-field, .invite-form .btn'), {
+    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1, delay: 0.5,
   });
 }
 
@@ -1398,7 +1530,14 @@ function enterFooter() {
   });
 }
 
-playEnter(0);
+enterFnByEl.set(heroEl, enterHero);
+enterFnByEl.set(inviteEl, enterInvite);
+enterFnByEl.set(inviteFormEl, enterInviteForm);
+enterFnByEl.set(ecosystemEl, enterEcosystem);
+enterFnByEl.set(finalEl, enterFinal);
+enterFnByEl.set(footerEl, enterFooter);
+
+playEnter(slides[0]);
 
 /* ===================== INVITE FORM ===================== */
 const inviteForm = document.getElementById('invite-form');
