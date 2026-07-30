@@ -662,6 +662,7 @@ img{display:block;max-width:100%;}
 .marquee{
   position:absolute;
   left:3rem;right:3rem;bottom:0;
+  z-index:2;
   border-top:1px solid var(--line);
   overflow:hidden;
   padding:1.1rem 0;
@@ -706,7 +707,8 @@ img{display:block;max-width:100%;}
 .hero.has-marquee,
 .invite.has-marquee,
 .invite-form-section.has-marquee,
-.final-cta.has-marquee{
+.final-cta.has-marquee,
+.footer.has-marquee{
   padding-bottom:4.5rem;
 }
 
@@ -1111,7 +1113,7 @@ img{display:block;max-width:100%;}
   </section>
 
   <!-- ===================== FOOTER (final slide) ===================== -->
-  <section class="footer slide" id="footer" data-index="4">
+  <section class="footer slide has-marquee" id="footer" data-index="4">
     <div class="footer-glow" aria-hidden="true"></div>
     <div class="footer-inner">
       <div class="footer-top">
@@ -1147,6 +1149,21 @@ img{display:block;max-width:100%;}
 
       <div class="footer-bottom">
         <p>&copy; 2026 Watts Growth Labs. Part of the Watts Group ecosystem.</p>
+      </div>
+    </div>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>POSITIONING</span><span>&mdash;</span>
+        <span>AUTHORITY</span><span>&mdash;</span>
+        <span>CAPITAL</span><span>&mdash;</span>
+        <span>TECHNOLOGY</span><span>&mdash;</span>
+        <span>COMMUNITY</span><span>&mdash;</span>
+        <span>POSITIONING</span><span>&mdash;</span>
+        <span>AUTHORITY</span><span>&mdash;</span>
+        <span>CAPITAL</span><span>&mdash;</span>
+        <span>TECHNOLOGY</span><span>&mdash;</span>
+        <span>COMMUNITY</span><span>&mdash;</span>
       </div>
     </div>
   </section>
