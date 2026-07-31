@@ -206,11 +206,17 @@ img{display:block;max-width:100%;}
   border-radius:12px;
   background:rgba(10,10,11,.5);
   backdrop-filter:blur(6px);
-  opacity:1;
+  opacity:0;
   pointer-events:none;
-  transition:opacity .4s var(--ease), border-color .4s var(--ease);
+  cursor:pointer;
+  transition:opacity .6s var(--ease), border-color .4s var(--ease);
 }
-.brand-mark.hidden{opacity:0;}
+/* Stays invisible/inert until the preloader hands off — otherwise it's
+   sitting there at full opacity the whole time, just covered by the
+   preloader's z-index, and flashes into view the instant that slides away. */
+.brand-mark.revealed{opacity:1;pointer-events:auto;}
+.brand-mark:hover{border-color:var(--bronze);}
+.brand-mark.hidden{opacity:0;pointer-events:none;}
 .brand-mark-crop{
   width:6rem;
   height:2.73rem;
@@ -955,11 +961,11 @@ img{display:block;max-width:100%;}
 <div class="grain"></div>
 
 <!-- Persistent brand mark (hidden on the footer slide) -->
-<div class="brand-mark" id="brand-mark" aria-hidden="true">
+<button type="button" class="brand-mark" id="brand-mark" aria-label="Go to hero section">
   <div class="brand-mark-crop">
     <img src="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png" alt="Watts Growth Labs">
   </div>
-</div>
+</button>
 
 <!-- Slide navigation chrome -->
 <button class="slide-back" id="slide-back" aria-label="Previous section">
@@ -1064,7 +1070,7 @@ img{display:block;max-width:100%;}
             <p class="form-desc">Share a few details and our team will follow up to confirm fit for partnership.</p>
 
             <iframe
-              src="https://api.leadconnectorhq.com/widget/form/qfDgFA4IDM0vszRbIlob"
+              data-src="https://api.leadconnectorhq.com/widget/form/qfDgFA4IDM0vszRbIlob"
               style="width:100%;height:100%;border:none;border-radius:8px"
               id="inline-qfDgFA4IDM0vszRbIlob"
               data-layout="{'id':'INLINE'}"
@@ -1257,9 +1263,13 @@ const isTouch = window.matchMedia('(max-width:1024px)').matches;
 /* ===================== PRELOADER ===================== */
 window.addEventListener('load', () => {
   const pre = document.getElementById('preloader');
+  const brandMark = document.getElementById('brand-mark');
 
   if (prefersReducedMotion) {
-    setTimeout(() => pre.remove(), 900);
+    setTimeout(() => {
+      pre.remove();
+      brandMark.classList.add('revealed');
+    }, 900);
     return;
   }
 
@@ -1270,6 +1280,7 @@ window.addEventListener('load', () => {
       ease: 'power3.inOut',
       onComplete: () => pre.remove(),
     });
+    brandMark.classList.add('revealed');
   }, 2900);
 });
 
@@ -1568,6 +1579,7 @@ function goTo(index) {
     updateChrome();
     playEnter(entering);
     if (entering === inviteFormEl || (entering === inviteEl && !isMobileSplit())) highlightInviteForm();
+    if (inviteFormLoaded) syncFormIframePointerEvents();
   };
 
   transitionFor(leaving, entering)(leaving, entering, leavingIndex, index, finish);
@@ -1592,9 +1604,18 @@ window.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 let touchStartY = null;
-window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+let touchStartOnInteractive = false;
+const INTERACTIVE_SELECTOR = 'a, button, .dot, iframe, input, textarea, select, [data-goto]';
+window.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+  touchStartOnInteractive = !!e.target.closest(INTERACTIVE_SELECTOR);
+}, { passive: true });
 window.addEventListener('touchend', (e) => {
-  if (touchStartY === null || animating) return;
+  if (touchStartY === null || animating || touchStartOnInteractive) {
+    touchStartY = null;
+    touchStartOnInteractive = false;
+    return;
+  }
   const dy = touchStartY - e.changedTouches[0].clientY;
   touchStartY = null;
   if (Math.abs(dy) < 60) return;
@@ -1615,7 +1636,19 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); goTo(current - 1); }
 });
 
+// Safety net: if the form iframe ever grabs focus (and pops the mobile
+// keyboard) while its slide isn't the one on screen, hand focus back.
+window.addEventListener('blur', () => {
+  setTimeout(() => {
+    const active = document.activeElement;
+    if (!active || active.tagName !== 'IFRAME') return;
+    const slide = active.closest('.slide');
+    if (slide && slide !== activeSlideEl()) active.blur();
+  }, 0);
+});
+
 document.getElementById('slide-back').addEventListener('click', () => goTo(current - 1));
+document.getElementById('brand-mark').addEventListener('click', () => goTo(0));
 
 function bindGotoAnchor(el) {
   el.addEventListener('click', (e) => {
@@ -1682,6 +1715,36 @@ function enterHero() {
   });
 }
 
+// The GHL form iframe auto-focuses its first field as soon as its own content
+// loads — regardless of whether the parent slide is visible. If it's given a
+// src up front it loads while sitting on a hidden/inactive slide and steals
+// focus (popping the mobile keyboard) long before the user ever reaches it.
+// So it's left srcless in the HTML and only loaded once its slide is entered.
+let inviteFormLoaded = false;
+function loadInviteFormIframe() {
+  if (inviteFormLoaded) return;
+  const iframe = document.getElementById('inline-qfDgFA4IDM0vszRbIlob');
+  if (!iframe || !iframe.dataset.src) return;
+  iframe.src = iframe.dataset.src;
+  inviteFormLoaded = true;
+
+  // GHL's form_embed.js sets pointer-events:auto directly on the iframe
+  // (an inline style) once it finishes wiring up the embed. Inline styles
+  // beat the inherited pointer-events:none we put on inactive slides, so
+  // the iframe stays clickable/focusable forever after that — even while
+  // sitting on a hidden slide — which is what let it steal focus again on
+  // a later visit. Keep forcing it back in line with the real active slide.
+  syncFormIframePointerEvents();
+  new MutationObserver(syncFormIframePointerEvents).observe(iframe, { attributes: true, attributeFilter: ['style'] });
+}
+
+function syncFormIframePointerEvents() {
+  const iframe = document.getElementById('inline-qfDgFA4IDM0vszRbIlob');
+  if (!iframe) return;
+  const want = iframe.closest('.slide') === activeSlideEl() ? 'auto' : 'none';
+  if (iframe.style.pointerEvents !== want) iframe.style.pointerEvents = want;
+}
+
 function enterInvite() {
   gsap.to(inviteEl.querySelectorAll('.eyebrow'), { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 });
   gsap.to(inviteEl.querySelectorAll('.mask .line'), { y: '0%', duration: 1.1, ease: 'power4.out', delay: 0.25 });
@@ -1689,6 +1752,7 @@ function enterInvite() {
   gsap.to(inviteEl.querySelectorAll('.form-field, .invite-form .btn'), {
     opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1, delay: 1.1,
   });
+  loadInviteFormIframe();
 }
 
 function enterInviteForm() {
@@ -1696,6 +1760,7 @@ function enterInviteForm() {
   gsap.to(inviteFormEl.querySelectorAll('.form-field, .invite-form .btn'), {
     opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1, delay: 0.5,
   });
+  loadInviteFormIframe();
 }
 
 function enterEcosystem() {
