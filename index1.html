@@ -524,11 +524,19 @@ img{display:block;max-width:100%;}
 .invite-form{
   position:relative;
   width:100%;
-  padding:2rem;
   border:1px solid var(--line);
   border-radius:10px;
   background:linear-gradient(160deg, #ffffff0d, #ffffff02);
 }
+.invite-form-inner{
+  padding:2rem;
+  max-height:calc(100vh - 4rem);
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.invite-form-inner::-webkit-scrollbar{display:none;}
 .invite-form::before{
   content:'';
   position:absolute;
@@ -577,7 +585,7 @@ img{display:block;max-width:100%;}
   color:var(--ink-dim);
   font-weight:300;
   letter-spacing:.02em;
-  margin-bottom:1.5rem;
+  margin-bottom:.75rem;
 }
 .form-field{display:block;width:100%;margin-bottom:1rem;opacity:0;transform:translateY(14px);}
 .form-field input{
@@ -644,7 +652,7 @@ img{display:block;max-width:100%;}
 }
 @media (max-width:480px){
   .invite{padding:8rem 1rem 2.5rem;}
-  .invite-form{padding:1.5rem;}
+  .invite-form-inner{padding:1.5rem;}
   .form-heading{font-size:1.3rem;}
 }
 @media (min-width:1440px){
@@ -1050,28 +1058,30 @@ img{display:block;max-width:100%;}
 
       <div class="invite-visual" id="invite-visual">
         <div class="invite-form reveal-fade" id="invite-form">
-          <p class="form-eyebrow">Request Access</p>
-          <h3 class="form-heading">Start your application</h3>
-          <p class="form-desc">Share a few details and our team will follow up to confirm fit for partnership.</p>
+          <div class="invite-form-inner">
+            <p class="form-eyebrow">Request Access</p>
+            <h3 class="form-heading">Start your application</h3>
+            <p class="form-desc">Share a few details and our team will follow up to confirm fit for partnership.</p>
 
-          <iframe
-            src="https://api.leadconnectorhq.com/widget/form/qfDgFA4IDM0vszRbIlob"
-            style="width:100%;height:100%;border:none;border-radius:8px"
-            id="inline-qfDgFA4IDM0vszRbIlob"
-            data-layout="{'id':'INLINE'}"
-            data-trigger-type="alwaysShow"
-            data-trigger-value=""
-            data-activation-type="alwaysActivated"
-            data-activation-value=""
-            data-deactivation-type="neverDeactivate"
-            data-deactivation-value=""
-            data-form-name="WGL MAIN FORM"
-            data-height="461"
-            data-layout-iframe-id="inline-qfDgFA4IDM0vszRbIlob"
-            data-form-id="qfDgFA4IDM0vszRbIlob"
-            title="WGL MAIN FORM"
-          >
-          </iframe>
+            <iframe
+              src="https://api.leadconnectorhq.com/widget/form/qfDgFA4IDM0vszRbIlob"
+              style="width:100%;height:100%;border:none;border-radius:8px"
+              id="inline-qfDgFA4IDM0vszRbIlob"
+              data-layout="{'id':'INLINE'}"
+              data-trigger-type="alwaysShow"
+              data-trigger-value=""
+              data-activation-type="alwaysActivated"
+              data-activation-value=""
+              data-deactivation-type="neverDeactivate"
+              data-deactivation-value=""
+              data-form-name="WGL MAIN FORM"
+              data-height="461"
+              data-layout-iframe-id="inline-qfDgFA4IDM0vszRbIlob"
+              data-form-id="qfDgFA4IDM0vszRbIlob"
+              title="WGL MAIN FORM"
+            >
+            </iframe>
+          </div>
         </div>
       </div>
       <script src="https://link.msgsndr.com/js/form_embed.js"></script>
@@ -1715,6 +1725,31 @@ enterFnByEl.set(finalEl, enterFinal);
 enterFnByEl.set(footerEl, enterFooter);
 
 playEnter(slides[0]);
+
+/* ===================== INVITE FORM ===================== */
+const inviteForm = document.getElementById('invite-form');
+if (inviteForm) {
+  inviteForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!inviteForm.checkValidity()) {
+      inviteForm.reportValidity();
+      return;
+    }
+
+    const success = document.getElementById('invite-form-success');
+    gsap.to(inviteForm, {
+      opacity: 0,
+      y: -10,
+      duration: 0.4,
+      ease: 'power2.out',
+      onComplete: () => {
+        inviteForm.style.display = 'none';
+        success.classList.add('visible');
+        gsap.fromTo(success, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
+      },
+    });
+  });
+}
 
 /* ===================== CANVAS SETUP HELPER ===================== */
 function setupCanvas(canvas) {
