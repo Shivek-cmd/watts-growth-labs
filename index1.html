@@ -198,6 +198,43 @@ img{display:block;max-width:100%;}
   .slide-back,.slide-dots{display:none;}
 }
 
+/* ===================== BRAND MARK (persistent chrome, hidden on footer) ===================== */
+.brand-mark{
+  position:fixed;top:2.5rem;left:3rem;z-index:200;
+  padding:.75rem 1.15rem;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(10,10,11,.5);
+  backdrop-filter:blur(6px);
+  opacity:1;
+  pointer-events:none;
+  transition:opacity .4s var(--ease), border-color .4s var(--ease);
+}
+.brand-mark.hidden{opacity:0;}
+.brand-mark-crop{
+  width:6rem;
+  height:2.73rem;
+  overflow:hidden;
+  position:relative;
+}
+.brand-mark-crop img{
+  position:absolute;
+  top:-2.31rem;
+  left:-.69rem;
+  width:7.4rem;
+  height:7.4rem;
+  max-width:none;
+}
+@media (max-width:1024px){
+  .brand-mark{top:2rem;left:1.5rem;}
+}
+@media (max-width:767px){
+  .brand-mark{top:1.75rem;left:1.25rem;transform:scale(.9);transform-origin:top left;}
+}
+@media (max-width:480px){
+  .brand-mark{top:1.5rem;left:1rem;transform:scale(.8);transform-origin:top left;}
+}
+
 /* ===================== TYPE HELPERS ===================== */
 .eyebrow{
   font-size:.75rem;
@@ -248,15 +285,17 @@ img{display:block;max-width:100%;}
   background:var(--bronze);
   color:#0a0a0b;
   font-weight:600;
+  transition:color .3s var(--ease);
 }
 .btn-primary::before{
   content:'';
   position:absolute;inset:0;
-  background:var(--ink);
+  background:#0a0a0b;
   transform:translateY(100%);
   transition:transform .5s var(--ease);
   z-index:1;
 }
+.btn-primary:hover{color:var(--ink);}
 .btn-primary:hover::before{transform:translateY(0);}
 .btn-ghost{
   border:1px solid var(--line);
@@ -823,12 +862,35 @@ img{display:block;max-width:100%;}
 }
 .footer-link:hover span{color:var(--bronze);transform:translateX(3px);}
 .footer-link:hover::after{width:100%;}
+.footer-locations{
+  display:flex;
+  flex-direction:column;
+  gap:1.3rem;
+}
+.footer-locations .footer-heading{
+  margin-bottom:0;
+}
 .footer-address{
   color:var(--ink-dim);
   font-size:.8rem;
   line-height:1.55;
-  margin-bottom:1.1rem;
 }
+.footer-address-link{
+  display:block;
+  position:relative;
+  width:fit-content;
+  transition:color .3s var(--ease);
+}
+.footer-address-link::after{
+  content:'';
+  position:absolute;
+  left:0;bottom:-2px;
+  width:0;height:1px;
+  background:var(--bronze);
+  transition:width .35s var(--ease);
+}
+.footer-address-link:hover{color:var(--bronze);}
+.footer-address-link:hover::after{width:100%;}
 .footer-bottom{
   padding:3rem 0 0;
   text-align:center;
@@ -883,6 +945,13 @@ img{display:block;max-width:100%;}
 
 <!-- Grain overlay -->
 <div class="grain"></div>
+
+<!-- Persistent brand mark (hidden on the footer slide) -->
+<div class="brand-mark" id="brand-mark" aria-hidden="true">
+  <div class="brand-mark-crop">
+    <img src="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png" alt="Watts Growth Labs">
+  </div>
+</div>
 
 <!-- Slide navigation chrome -->
 <button class="slide-back" id="slide-back" aria-label="Previous section">
@@ -980,33 +1049,32 @@ img{display:block;max-width:100%;}
       </div>
 
       <div class="invite-visual" id="invite-visual">
-        <form class="invite-form reveal-fade" id="invite-form" novalidate>
+        <div class="invite-form reveal-fade" id="invite-form">
           <p class="form-eyebrow">Request Access</p>
           <h3 class="form-heading">Start your application</h3>
           <p class="form-desc">Share a few details and our team will follow up to confirm fit for partnership.</p>
 
-          <label class="form-field">
-            <input type="text" name="name" placeholder="Full name" required>
-          </label>
-          <label class="form-field">
-            <input type="email" name="email" placeholder="Email address" required>
-          </label>
-          <label class="form-field">
-            <input type="tel" name="phone" placeholder="Phone number" required>
-          </label>
-          <label class="form-field">
-            <input type="text" name="business" placeholder="Business name">
-          </label>
-          <button type="submit" class="btn btn-primary magnetic" data-magnetic>
-            <span>Submit Application</span>
-          </button>
-        </form>
-
-        <div class="form-success" id="invite-form-success">
-          <span class="form-success-mark">&#10003;</span>
-          <p>Thank you — your invitation request has been received. We'll be in touch shortly.</p>
+          <iframe
+            src="https://api.leadconnectorhq.com/widget/form/qfDgFA4IDM0vszRbIlob"
+            style="width:100%;height:100%;border:none;border-radius:8px"
+            id="inline-qfDgFA4IDM0vszRbIlob"
+            data-layout="{'id':'INLINE'}"
+            data-trigger-type="alwaysShow"
+            data-trigger-value=""
+            data-activation-type="alwaysActivated"
+            data-activation-value=""
+            data-deactivation-type="neverDeactivate"
+            data-deactivation-value=""
+            data-form-name="WGL MAIN FORM"
+            data-height="461"
+            data-layout-iframe-id="inline-qfDgFA4IDM0vszRbIlob"
+            data-form-id="qfDgFA4IDM0vszRbIlob"
+            title="WGL MAIN FORM"
+          >
+          </iframe>
         </div>
       </div>
+      <script src="https://link.msgsndr.com/js/form_embed.js"></script>
     </div>
 
     <div class="marquee">
@@ -1089,7 +1157,7 @@ img{display:block;max-width:100%;}
       <h2 class="final-title mask"><span class="line">Access begins with a request.</span></h2>
       <p class="body-text reveal-fade">
         A brief conversation determines fit. If aligned, you'll be welcomed into the
-        partnership — on your terms, at your pace.
+        partnership — with comfort, at your pace.
       </p>
       <a href="#invite" class="btn btn-primary btn-large magnetic reveal-fade" data-magnetic data-goto="1">
         <span>Apply for the Invite</span>
@@ -1131,19 +1199,20 @@ img{display:block;max-width:100%;}
           <a href="https://wa.me/15795699999" target="_blank" rel="noopener" class="footer-link"><span>WhatsApp</span></a>
         </div>
 
-        <div class="footer-col">
+        <div class="footer-col footer-locations">
           <p class="footer-heading">Locations<span class="footer-heading-rule"></span></p>
-          <p class="footer-address">
+          <a href="https://www.google.com/maps/search/?api=1&query=Watts+Growth+Labs+1925+18+Ave+NE+Suite+115+Calgary+AB+T2E+7T8" target="_blank" rel="noopener" class="footer-address footer-address-link">
             Watts Growth Labs, 1925 18 Ave NE, Suite 115, Calgary, AB T2E 7T8
-          </p>
-          <p class="footer-address">
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Watts+Group+Ltd+120+Traders+Blvd+E+Suite+209+Mississauga+ON+L4Z+2H7" target="_blank" rel="noopener" class="footer-address footer-address-link">
             Watts Group Ltd., 120 Traders Blvd E, Suite 209, Mississauga, ON L4Z 2H7
-          </p>
+          </a>
         </div>
 
         <div class="footer-col">
           <p class="footer-heading">Ecosystem<span class="footer-heading-rule"></span></p>
           <a href="https://wattsgroup.in" target="_blank" rel="noopener" class="footer-link"><span>Watts Group &rarr;</span></a>
+          <a href="https://riteshwatts.com" target="_blank" rel="noopener" class="footer-link"><span>Ritesh Watts, Founder &rarr;</span></a>
         </div>
       </div>
 
@@ -1355,6 +1424,7 @@ const DOT_LABELS = {
 function updateChrome() {
   document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
   document.getElementById('slide-back').classList.toggle('visible', current > 0);
+  document.getElementById('brand-mark').classList.toggle('hidden', slides[current] === footerEl);
 }
 
 function rebuildDots() {
@@ -1645,31 +1715,6 @@ enterFnByEl.set(finalEl, enterFinal);
 enterFnByEl.set(footerEl, enterFooter);
 
 playEnter(slides[0]);
-
-/* ===================== INVITE FORM ===================== */
-const inviteForm = document.getElementById('invite-form');
-if (inviteForm) {
-  inviteForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!inviteForm.checkValidity()) {
-      inviteForm.reportValidity();
-      return;
-    }
-
-    const success = document.getElementById('invite-form-success');
-    gsap.to(inviteForm, {
-      opacity: 0,
-      y: -10,
-      duration: 0.4,
-      ease: 'power2.out',
-      onComplete: () => {
-        inviteForm.style.display = 'none';
-        success.classList.add('visible');
-        gsap.fromTo(success, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
-      },
-    });
-  });
-}
 
 /* ===================== CANVAS SETUP HELPER ===================== */
 function setupCanvas(canvas) {
