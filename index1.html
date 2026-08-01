@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Watts Growth Labs — Invitation-Led Growth Partnerships</title>
 <meta name="description" content="Watts Growth Labs is a human-led growth partnership platform for founders, organizations, and leadership teams seeking sharper positioning, stronger authority, and more meaningful business momentum. Access begins through invitation.">
-<link rel="icon" type="image/png" href="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png">
-<link rel="apple-touch-icon" href="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png">
+<link rel="icon" type="image/png" href="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b9168ecb6db2520485978.png">
+<link rel="apple-touch-icon" href="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b9168ecb6db2520485978.png">
 <meta property="og:title" content="Watts Growth Labs — Invitation-Led Growth Partnerships">
 <meta property="og:description" content="Watts Growth Labs is a human-led growth partnership platform for founders, organizations, and leadership teams seeking sharper positioning, stronger authority, and more meaningful business momentum. Access begins through invitation.">
-<meta property="og:image" content="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png">
+<meta property="og:image" content="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b9168ecb6db2520485978.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png">
+<meta name="twitter:image" content="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b9168ecb6db2520485978.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -352,7 +352,7 @@ img{display:block;max-width:100%;}
 }
 
 /* ---- layered environment ---- */
-.hero-env{position:absolute;inset:0;z-index:0;}
+.hero-env{position:absolute;inset:0;z-index:0;overflow:hidden;}
 #grid-canvas,#particle-canvas{
   position:absolute;inset:0;
   width:100%;height:100%;
@@ -916,8 +916,15 @@ img{display:block;max-width:100%;}
 }
 
 @media (max-width:1024px){
-  .footer{padding:6.5rem 1.5rem 1.75rem;overflow-y:auto;align-items:flex-start;}
+  .footer{padding:6.5rem 1.5rem 1.75rem;overflow-y:auto;align-items:flex-start;flex-direction:column;}
   .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem;}
+  /* The footer's content is taller than the screen here and needs real
+     scrolling, but .marquee's position:absolute;bottom:0 pins it to the
+     bottom of the viewport rather than the bottom of the scrolled content —
+     so it was overlapping Locations/Ecosystem instead of trailing after
+     everything. Let it flow normally after the footer content instead. */
+  .footer.has-marquee{padding-bottom:1.75rem;}
+  .footer .marquee{position:static;left:auto;right:auto;bottom:auto;width:100%;margin-top:2rem;}
 }
 @media (max-width:480px){
   .footer{padding:5.5rem 1.25rem 1.5rem;}
