@@ -1317,7 +1317,7 @@ img{display:block;max-width:100%;}
 @media (max-width:1024px){
   .ecosystem{padding:6.5rem 0 4rem;}
   .ecosystem-pin{padding:0 1.5rem;}
-  .marquee{left:1.5rem;right:1.5rem;}
+  .marquee{left:0;right:0;}
 }
 @media (max-width:767px){
   .ecosystem{padding:5.5rem 0 3.5rem;}
@@ -1328,7 +1328,7 @@ img{display:block;max-width:100%;}
 @media (max-width:480px){
   .ecosystem{padding:5.5rem 0 3.5rem;}
   .ecosystem-pin{padding:0 1rem;}
-  .marquee{left:1rem;right:1rem;}
+  .marquee{left:0;right:0;}
   .marquee-track span{font-size:.95rem;}
 }
 @media (min-width:1440px){
@@ -1660,11 +1660,16 @@ img{display:block;max-width:100%;}
   margin-bottom:1rem;
 }
 .footer-logo{
+  display:block;
   width:10rem;
   height:4.6rem;
   overflow:hidden;
   position:relative;
   margin-bottom:1.4rem;
+  border:none;
+  background:none;
+  padding:0;
+  cursor:pointer;
 }
 .footer-logo img{
   position:absolute;
@@ -1763,11 +1768,12 @@ img{display:block;max-width:100%;}
      so it was overlapping Locations/Ecosystem instead of trailing after
      everything. Let it flow normally after the footer content instead. */
   .footer.has-marquee{padding-bottom:1.75rem;}
-  .footer .marquee{position:static;left:auto;right:auto;bottom:auto;width:100%;margin-top:2rem;}
+  .footer .marquee{position:static;left:auto;right:auto;bottom:auto;width:auto;margin:2rem -1.5rem 0;}
 }
 @media (max-width:480px){
   .footer{padding:5.5rem 1.25rem 1.5rem;}
   .footer-top{grid-template-columns:1fr;gap:2.75rem;}
+  .footer .marquee{margin:2rem -1.25rem 0;}
 }
 @media (min-width:1440px){
   .footer{padding:8.5rem 5rem 4rem;}
@@ -2075,7 +2081,7 @@ img{display:block;max-width:100%;}
   <!-- ===================== WHAT PARTNERSHIP MAY INCLUDE — TILES ===================== -->
   <section class="partnership-tiles slide has-marquee" id="partnership-tiles" data-index="4">
     <div class="partnership-tiles-inner">
-      <p class="eyebrow">Premium Tiles</p>
+      <p class="eyebrow">What Partnership May Include</p>
 
       <div class="tile-grid">
         <div class="tile reveal-fade">
@@ -2412,9 +2418,9 @@ img{display:block;max-width:100%;}
     <div class="footer-inner">
       <div class="footer-top">
         <div class="footer-col footer-brand">
-          <div class="footer-logo">
+          <button type="button" class="footer-logo" id="footer-logo-link" aria-label="Go to hero section">
             <img src="https://assets.cdn.filesafe.space/hGfSazDg0icOi6lgiT07/media/6a6b907b497cd89d24b89f11.png" alt="Watts Growth Labs">
-          </div>
+          </button>
           <p class="footer-tag">Invitation-led growth partnerships for businesses building what's next.</p>
         </div>
 
@@ -3041,6 +3047,7 @@ window.addEventListener('blur', () => {
 
 document.getElementById('slide-back').addEventListener('click', () => goTo(current - 1));
 document.getElementById('brand-mark').addEventListener('click', () => goTo(0));
+document.getElementById('footer-logo-link').addEventListener('click', () => goTo(0));
 
 function bindGotoAnchor(el) {
   el.addEventListener('click', (e) => {
