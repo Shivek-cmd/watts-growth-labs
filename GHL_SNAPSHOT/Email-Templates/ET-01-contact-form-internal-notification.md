@@ -78,7 +78,8 @@ New Watts Growth Labs Application — {{contact.name}}
                       <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Name</span> {{contact.name}}</p>
                       <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Email</span> {{contact.email}}</p>
                       <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Phone</span> {{contact.phone}}</p>
-                      <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Business</span> {{contact.business_name_wgl}}</p>
+                      <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Business</span> {{contact.business_name_wgl}}</p>
+                      <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1A1712;"><span class="field-label" style="display:inline-block;width:110px;color:#8A8478;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Website/Link</span> {{contact.website_or_primary_link_wgl}}</p>
                     </td>
                   </tr>
                 </tbody>
@@ -132,5 +133,5 @@ New Watts Growth Labs Application — {{contact.name}}
 ## Outstanding Before Use
 
 - [ ] Wire this HTML into a new **Send Email** action in `Workflows/wgl-contact-form-lead-workflow.md` (Action 2)
-- [ ] Confirm `business_name_wgl` is the live custom field key for Business Name (see `Forms/wgl-main-form.md`) — create it first if it doesn't exist yet
+- [ ] Confirm `business_name_wgl` and `website_or_primary_link_wgl` are the live custom field keys (see `Forms/wgl-main-form.md`) — create them first if they don't exist yet
 - [ ] Send a live test to confirm the bronze accent bar and warm-ivory palette render correctly in Gmail/Outlook

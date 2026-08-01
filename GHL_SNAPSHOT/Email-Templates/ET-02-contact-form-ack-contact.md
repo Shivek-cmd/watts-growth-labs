@@ -7,7 +7,7 @@
 
 **Subject:**
 ```
-We've received your application, {{contact.name}}
+Your entry has been logged, {{contact.name}}
 ```
 
 > Copy everything inside the code block below and paste it into GHL's HTML editor (Send Email action → switch to HTML/code view).
@@ -19,7 +19,7 @@ We've received your application, {{contact.name}}
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
-  <title>We've Received Your Application</title>
+  <title>Your Entry Has Been Logged</title>
   <!--[if mso]>
   <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
   <![endif]-->
@@ -37,7 +37,7 @@ We've received your application, {{contact.name}}
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#FAF8F4;width:100%;"><div style="display:none;font-size:1px;color:#FAF8F4;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">We've received your application — thank you for reaching out.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<body style="margin:0;padding:0;background-color:#FAF8F4;width:100%;"><div style="display:none;font-size:1px;color:#FAF8F4;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">Your entry has been logged. A verification and brief qualification email is on its way.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 
   <!-- Outer wrapper -->
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#FAF8F4;">
@@ -60,7 +60,7 @@ We've received your application, {{contact.name}}
               <p style="margin:0 0 14px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#A27E4B;font-weight:700;text-align:center;">Watts Growth Labs &nbsp;&middot;&nbsp; Request Access</p>
 
               <!-- Headline -->
-              <h1 class="hero-title" style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.25;color:#1A1712;font-weight:700;text-align:center;">Application Received</h1>
+              <h1 class="hero-title" style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.25;color:#1A1712;font-weight:700;text-align:center;">Your Entry Has Been Logged</h1>
 
               <!-- Accent underline (centered) -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:0 auto 32px;"><tbody><tr>
@@ -68,7 +68,9 @@ We've received your application, {{contact.name}}
               </tr></tbody></table>
 
               <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.8;color:#4A453D;">Hi {{contact.name}},</p>
-              <p style="margin:0 0 32px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.8;color:#4A453D;">Thank you for your application. We've received your details and our team will review it within <strong style="color:#1A1712;">2 business days</strong>.</p>
+              <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.8;color:#4A453D;">Thank you. Your entry has been logged.</p>
+              <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.8;color:#4A453D;">A verification and brief qualification email has been dispatched to your corporate inbox. Because we protect the operational integrity and focus of our existing rooms, Ritesh personally reviews every entry to assess structural alignment before an invitation conversation is extended.</p>
+              <p style="margin:0 0 32px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.8;color:#4A453D;">Please review and reply directly to the email to advance your request.</p>
 
               <!-- Divider -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"><tbody><tr><td style="border-top:1px solid #E5DFD4;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr></tbody></table>
@@ -114,7 +116,7 @@ We've received your application, {{contact.name}}
 
 > No logo — removed per request. The email opens straight into the accent bar and centered headline.
 >
-> Message simplified per request — no "public enrollment" / application-review framing, no 3-step "what happens next" teaser. Just a greeting, thanks, and a 2-business-day review promise.
+> Updated per request: this is now the brief "entry logged" confirmation, not a review-timeline promise. It exists specifically to set expectations that a *second*, separate email (`ET-03-contact-form-qualification.md`) is on its way and requires a reply — this one does not ask for a reply itself.
 
 ## Outstanding Before Use
 

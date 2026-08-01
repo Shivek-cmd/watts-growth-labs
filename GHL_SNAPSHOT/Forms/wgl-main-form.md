@@ -16,10 +16,11 @@
 | Email | Yes | `{{contact.email}}` |
 | Phone | Yes | `{{contact.phone}}` |
 | Business Name | Yes | `{{contact.business_name_wgl}}` |
+| Website or Primary Social Link | Yes | `{{contact.website_or_primary_link_wgl}}` |
 
 > `{{contact.name}}`, `{{contact.email}}`, and `{{contact.phone}}` are GHL **standard** fields — no setup needed.
 >
-> Business Name is a **custom** field on this form: `business_name_wgl`. Unlike the Aifyze contact form (which maps Business Name to the standard `company_name` field), WGL's Business Name question writes to this custom field instead — confirm this against `Settings → Custom Fields → Contacts` before wiring the workflow, and create it first if it doesn't exist yet (see below).
+> Business Name and Website/Primary Link are **custom** fields on this form: `business_name_wgl` and `website_or_primary_link_wgl`. Unlike the Aifyze contact form (which maps Business Name to the standard `company_name` field), WGL's Business Name question writes to this custom field instead — confirm both against `Settings → Custom Fields → Contacts` before wiring the workflow, and create them first if they don't exist yet (see below).
 
 ---
 
@@ -30,6 +31,7 @@
 | Field Label | Key | Type |
 |---|---|---|
 | Business Name (WGL) | `business_name_wgl` | Single Line Text |
+| Website or Primary Social Link (WGL) | `website_or_primary_link_wgl` | Single Line Text |
 
 ---
 
@@ -40,4 +42,5 @@
    - Adds tag `wgl-new-lead`
    - Sends internal notification email to `hello@riteshwatts.com` (`Email-Templates/ET-01-contact-form-internal-notification.md`)
    - Sends acknowledgment email to the applicant (`Email-Templates/ET-02-contact-form-ack-contact.md`)
+   - Sends the qualification/next-step email to the applicant (`Email-Templates/ET-03-contact-form-qualification.md`)
    - Creates an opportunity in the **Watts Growth Labs - Client Acquisition** pipeline, stage **New Lead** (`Opportunities/wgl-client-acquisition-pipeline.md`)

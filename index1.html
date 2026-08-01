@@ -474,6 +474,31 @@ img{display:block;max-width:100%;}
   transform:translateX(-100%);
   pointer-events:none;
 }
+.blinds{
+  position:fixed;inset:0;
+  z-index:150;
+  display:flex;
+  pointer-events:none;
+}
+.blind-strip{
+  flex:1 0 auto;
+  height:100%;
+  background:var(--bronze);
+  /* hidden position (yPercent:-100) is set via GSAP on load, not here — a
+     plain CSS percentage transform confuses GSAP's yPercent baseline later */
+}
+.split-doors{
+  position:fixed;inset:0;
+  z-index:150;
+  display:flex;
+  pointer-events:none;
+}
+.split-panel{
+  width:50%;
+  height:100%;
+  background:var(--bronze);
+  /* hidden position (xPercent) is set via GSAP on load — see note above */
+}
 
 /* ===================== HERO ===================== */
 .hero{
@@ -701,7 +726,7 @@ img{display:block;max-width:100%;}
    causing an internal scrollbar that clips the submit button. min-height
    works alongside that inline height (browser uses whichever is larger) without
    needing !important, giving the real form enough room to render in full. */
-#inline-qfDgFA4IDM0vszRbIlob{min-height:480px;}
+#inline-qfDgFA4IDM0vszRbIlob{min-height:400px;}
 .invite-form::before{
   content:'';
   position:absolute;
@@ -788,7 +813,11 @@ img{display:block;max-width:100%;}
   .invite-grid{grid-template-columns:1fr;gap:2rem;}
 }
 @media (max-width:767px){
-  .invite{padding:8.75rem 1.5rem 3rem;}
+  .invite{padding:6rem 1.5rem 3rem;align-items:flex-start;}
+  .invite-note{display:none;}
+  .invite-copy .eyebrow{margin-bottom:1rem;}
+  .benefit-list{margin:1.25rem 0 1.25rem;}
+  .invite-cta{margin-top:1rem;}
 }
 @media (max-width:480px){
   .invite{padding:8rem 1rem 2.5rem;}
@@ -845,6 +874,7 @@ img{display:block;max-width:100%;}
   opacity:.85;
   margin-bottom:.9rem;
 }
+.fit-card-header{display:block;}
 .fit-card-title{
   font-family:var(--serif);
   font-weight:400;
@@ -860,6 +890,8 @@ img{display:block;max-width:100%;}
   font-weight:300;
   letter-spacing:.02em;
 }
+/* toggle affordance only exists on mobile (see accordion rules below) */
+.fit-card-toggle-icon{display:none;}
 
 .who-for-note{
   max-width:58ch;
@@ -882,11 +914,11 @@ img{display:block;max-width:100%;}
 @media (max-width:767px){
   .who-for{padding:7rem 1.5rem 3rem;}
   .who-for-note{display:none;}
-  .who-for-copy .section-title{font-size:clamp(1.6rem,7vw,2.1rem);}
-  .who-for-copy .body-text{font-size:.9rem;margin-top:1rem;}
+  .who-for-copy .body-text{margin-top:1rem;}
 
-  /* compact numbered-list layout instead of boxed cards — keeps this slide
-     short enough to fit without an internal scroll on phone-height viewports */
+  /* compact numbered-list layout instead of boxed cards — same type scale as
+     the Private Access benefit list (section 2) for consistency, just a
+     tighter row layout instead of boxed cards */
   .fit-grid{
     display:block;
     margin:1.25rem 0 0;
@@ -895,8 +927,8 @@ img{display:block;max-width:100%;}
     display:grid;
     grid-template-columns:2rem 1fr;
     column-gap:1rem;
-    row-gap:.25rem;
-    padding:.85rem 0;
+    row-gap:.35rem;
+    padding:1.1rem 0;
     border:none;
     border-radius:0;
     background:none;
@@ -908,22 +940,63 @@ img{display:block;max-width:100%;}
     grid-column:1;
     grid-row:1 / 3;
     margin-bottom:0;
-    font-size:1rem;
+    font-size:1.05rem;
     opacity:1;
   }
-  .fit-card-title{grid-column:2;grid-row:1;margin-bottom:0;font-size:.95rem;}
-  .fit-card-text{grid-column:2;grid-row:2;font-size:.82rem;line-height:1.45;}
-}
-/* ---- shorter phones (e.g. iPhone SE): compress further so all 4 list rows
-   still fit without an internal scroll ---- */
-@media (max-width:767px) and (max-height:700px){
-  .who-for{padding:4.25rem 1.5rem 2.5rem;}
-  .who-for-copy .section-title{font-size:clamp(1.3rem,6vw,1.7rem);}
-  .who-for-copy .body-text{font-size:.8rem;line-height:1.5;margin-top:.6rem;}
-  .fit-grid{margin:.6rem 0 0;}
-  .fit-card{padding:.5rem 0;row-gap:.1rem;}
-  .fit-card-title{font-size:.86rem;}
-  .fit-card-text{font-size:.76rem;line-height:1.35;}
+
+  /* tap-to-expand accordion — same pattern as the Partnership tiles: title
+     stays visible, description collapses until tapped */
+  .fit-card-header{
+    grid-column:2;grid-row:1;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:.75rem;
+    cursor:pointer;
+  }
+  .fit-card-title{margin-bottom:0;font-size:1.05rem;}
+  .fit-card-toggle-icon{
+    display:block;
+    position:relative;
+    width:1rem;height:1rem;
+    flex-shrink:0;
+    margin-top:.3rem;
+  }
+  .fit-card-toggle-icon::before,
+  .fit-card-toggle-icon::after{
+    content:'';
+    position:absolute;
+    background:var(--bronze);
+    transition:transform .3s var(--ease);
+  }
+  .fit-card-toggle-icon::before{
+    top:50%;left:0;
+    width:100%;height:1px;
+    transform:translateY(-50%);
+  }
+  .fit-card-toggle-icon::after{
+    left:50%;top:0;
+    width:1px;height:100%;
+    transform:translateX(-50%);
+  }
+  .fit-card-header[aria-expanded="true"] .fit-card-toggle-icon::after{
+    transform:translateX(-50%) rotate(90deg) scaleY(0);
+  }
+  .fit-card-text{
+    grid-column:2;grid-row:2;
+    font-size:.95rem;
+    line-height:1.6;
+    max-height:0;
+    opacity:0;
+    margin-top:0;
+    overflow:hidden;
+    transition:max-height .4s var(--ease), opacity .3s ease, margin-top .4s var(--ease);
+  }
+  .fit-card.fit-open .fit-card-text{
+    max-height:16rem;
+    opacity:1;
+    margin-top:.35rem;
+  }
 }
 @media (max-width:480px){
   .who-for{padding:8rem 1rem 2.5rem;}
@@ -990,6 +1063,7 @@ img{display:block;max-width:100%;}
 }
 @media (max-width:767px){
   .partnership{padding:8.75rem 1.5rem 3rem;}
+  .partnership-bridge{display:none;}
 }
 @media (max-width:480px){
   .partnership{padding:8rem 1rem 2.5rem;}
@@ -1090,16 +1164,15 @@ img{display:block;max-width:100%;}
   .tile:not(:nth-child(n+5)){border-bottom:1px solid var(--line);}
 }
 @media (max-width:767px){
-  .partnership-tiles{padding:6.5rem 1.5rem 3rem;align-items:flex-start;}
+  .partnership-tiles{padding:6.5rem 1.5rem 3rem;}
   .partnership-tiles-inner .eyebrow{margin-bottom:1rem;}
   .tile-grid{grid-template-columns:1fr;}
   .tile{padding:.75rem 0;border-right:none !important;border-bottom:1px solid var(--line) !important;}
   .tile:last-child{border-bottom:none !important;}
-  .partnership-note{padding-top:.85rem;}
+  .partnership-note{display:none;}
 
-  /* tap-to-expand accordion: title + subtitle stay visible, description is
-     collapsed until tapped — keeps the slide short enough to read without
-     forcing a scroll through all 6 descriptions at once */
+  /* tap-to-expand accordion: only the main title stays visible by default —
+     subtitle + description both collapse together until tapped */
   .tile-header{
     display:flex;
     align-items:flex-start;
@@ -1107,7 +1180,8 @@ img{display:block;max-width:100%;}
     gap:.75rem;
     cursor:pointer;
   }
-  .tile-subtitle{margin-bottom:0;}
+  .tile-title{margin-bottom:0;}
+  .tile-subtitle{margin-bottom:.5rem;}
   .tile-toggle-icon{
     display:block;
     position:relative;
@@ -1135,15 +1209,15 @@ img{display:block;max-width:100%;}
   .tile-header[aria-expanded="true"] .tile-toggle-icon::after{
     transform:translateX(-50%) rotate(90deg) scaleY(0);
   }
-  .tile-text{
+  .tile-body{
     max-height:0;
     opacity:0;
     margin-top:0;
     overflow:hidden;
     transition:max-height .4s var(--ease), opacity .3s ease, margin-top .4s var(--ease);
   }
-  .tile.tile-open .tile-text{
-    max-height:16rem;
+  .tile.tile-open .tile-body{
+    max-height:18rem;
     opacity:1;
     margin-top:.6rem;
   }
@@ -1245,6 +1319,12 @@ img{display:block;max-width:100%;}
   .ecosystem-pin{padding:0 1.5rem;}
   .marquee{left:1.5rem;right:1.5rem;}
 }
+@media (max-width:767px){
+  .ecosystem{padding:5.5rem 0 3.5rem;}
+  .ecosystem-copy .body-text{margin-top:1rem;}
+  .ecosystem-proof{margin-top:.75rem;font-size:.85rem;}
+  .ecosystem-copy .btn{margin-top:1.25rem;}
+}
 @media (max-width:480px){
   .ecosystem{padding:5.5rem 0 3.5rem;}
   .ecosystem-pin{padding:0 1rem;}
@@ -1321,9 +1401,22 @@ img{display:block;max-width:100%;}
 }
 @media (max-width:767px){
   .process{padding:8.75rem 1.5rem 3rem;}
-  .step-row{grid-template-columns:1fr;gap:1.75rem;margin:2.5rem 0 2.25rem;}
-  .step{padding:0 0 1.75rem;border-right:none !important;border-bottom:1px solid var(--line);}
-  .step:last-child{padding-bottom:0;border-bottom:none;}
+  .process-note{display:none;}
+
+  /* horizontal numbered-list layout, same as Who This Is For's mobile treatment */
+  .step-row{display:block;margin:1.25rem 0 0;}
+  .step{
+    display:grid;
+    grid-template-columns:2rem 1fr;
+    column-gap:1rem;
+    padding:1.1rem 0;
+    text-align:left;
+    border-right:none !important;
+  }
+  .step:not(:first-child){border-top:1px solid var(--line);}
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step-num{margin-bottom:0;font-size:1.05rem;}
+  .step-text{font-size:.95rem;}
 }
 @media (max-width:480px){
   .process{padding:8rem 1rem 2.5rem;}
@@ -1398,6 +1491,9 @@ img{display:block;max-width:100%;}
 @media (max-width:767px){
   .final-cta{padding:8.75rem 0 3rem;}
   .final-cta-inner{padding:0 1.5rem;}
+  .final-title{display:none;}
+  .final-cta .body-text{display:none;}
+  .final-cta-helper{display:none;}
 }
 @media (max-width:480px){
   .final-cta{padding:8rem 0 2.5rem;}
@@ -1727,6 +1823,22 @@ img{display:block;max-width:100%;}
 
 <div class="curtain" id="curtain" aria-hidden="true"></div>
 
+<div class="blinds" id="blinds" aria-hidden="true">
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+  <span class="blind-strip"></span>
+</div>
+
+<div class="split-doors" id="split-doors" aria-hidden="true">
+  <span class="split-panel split-panel-left"></span>
+  <span class="split-panel split-panel-right"></span>
+</div>
+
 <main id="slides-wrapper">
 
   <!-- ===================== HERO ===================== -->
@@ -1796,9 +1908,7 @@ img{display:block;max-width:100%;}
         <p class="eyebrow">Private Access</p>
         <h2 class="section-title mask"><span class="line">Not open through public enrollment.</span></h2>
         <p class="body-text reveal-fade">
-          Partnership access is extended through invitation to businesses, founders, and
-          organizations aligned with the level of growth, positioning, and strategic
-          direction this platform is built for.
+          Partnership access is extended by invitation to aligned businesses and founders.
         </p>
 
         <ul class="benefit-list">
@@ -1852,34 +1962,45 @@ img{display:block;max-width:100%;}
       <div class="who-for-copy">
         <p class="eyebrow">Who This Is For</p>
         <h2 class="section-title mask"><span class="line">Built for businesses that need</span></h2>
-        <h2 class="section-title mask"><span class="line">sharper direction, not more noise.</span></h2>
+        <h2 class="section-title mask"><span class="line">sharper direction, not noise.</span></h2>
 
         <p class="body-text reveal-fade">
-          This platform is designed for founders, leadership teams, and organizations seeking
-          stronger market positioning, more meaningful authority, better leverage from media and
-          technology, and a more intentional path to growth.
+          Built for founders and leadership teams seeking sharper positioning, stronger authority,
+          and a more intentional path to growth.
         </p>
       </div>
 
       <div class="fit-grid">
         <div class="fit-card reveal-fade">
           <span class="fit-card-num">01</span>
-          <h3 class="fit-card-title">Founder-Led Businesses</h3>
+          <div class="fit-card-header" role="button" tabindex="0" aria-expanded="false">
+            <h3 class="fit-card-title">Founder-Led Businesses</h3>
+            <span class="fit-card-toggle-icon" aria-hidden="true"></span>
+          </div>
           <p class="fit-card-text">Preparing for a more visible, differentiated, or expansive next chapter.</p>
         </div>
         <div class="fit-card reveal-fade">
           <span class="fit-card-num">02</span>
-          <h3 class="fit-card-title">Expert-Led Firms</h3>
+          <div class="fit-card-header" role="button" tabindex="0" aria-expanded="false">
+            <h3 class="fit-card-title">Expert-Led Firms</h3>
+            <span class="fit-card-toggle-icon" aria-hidden="true"></span>
+          </div>
           <p class="fit-card-text">Seeking stronger positioning, authority, and market clarity.</p>
         </div>
         <div class="fit-card reveal-fade">
           <span class="fit-card-num">03</span>
-          <h3 class="fit-card-title">Leadership Teams</h3>
+          <div class="fit-card-header" role="button" tabindex="0" aria-expanded="false">
+            <h3 class="fit-card-title">Leadership Teams</h3>
+            <span class="fit-card-toggle-icon" aria-hidden="true"></span>
+          </div>
           <p class="fit-card-text">Navigating growth, transition, repositioning, or strategic change.</p>
         </div>
         <div class="fit-card reveal-fade">
           <span class="fit-card-num">04</span>
-          <h3 class="fit-card-title">AI-Curious Organizations</h3>
+          <div class="fit-card-header" role="button" tabindex="0" aria-expanded="false">
+            <h3 class="fit-card-title">AI-Curious Organizations</h3>
+            <span class="fit-card-toggle-icon" aria-hidden="true"></span>
+          </div>
           <p class="fit-card-text">Looking to apply AI in ways that create practical business leverage.</p>
         </div>
       </div>
@@ -1954,68 +2075,68 @@ img{display:block;max-width:100%;}
   <!-- ===================== WHAT PARTNERSHIP MAY INCLUDE — TILES ===================== -->
   <section class="partnership-tiles slide has-marquee" id="partnership-tiles" data-index="4">
     <div class="partnership-tiles-inner">
-      <p class="eyebrow">What Partnership May Include</p>
+      <p class="eyebrow">Premium Tiles</p>
 
       <div class="tile-grid">
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">Conversion Architecture</h3>
-              <p class="tile-subtitle">Website, Funnel &amp; Digital Experience</p>
-            </div>
+            <h3 class="tile-title">Conversion Architecture</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Designing and engineering high-converting websites and digital sales funnels that turn traffic into premium, qualified corporate pipeline.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">Website, Funnel &amp; Digital Experience</p>
+            <p class="tile-text">Designing and engineering high-converting websites and digital sales funnels that turn traffic into premium, qualified corporate pipeline.</p>
+          </div>
         </div>
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">Performance Infrastructure</h3>
-              <p class="tile-subtitle">Selective Advertising via Google, Meta &amp; LinkedIn</p>
-            </div>
+            <h3 class="tile-title">Performance Infrastructure</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Launching targeted, high-intent paid acquisition campaigns that place your brand directly in front of enterprise decision-makers.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">Selective Advertising via Google, Meta &amp; LinkedIn</p>
+            <p class="tile-text">Launching targeted, high-intent paid acquisition campaigns that place your brand directly in front of enterprise decision-makers.</p>
+          </div>
         </div>
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">Authority Distribution</h3>
-              <p class="tile-subtitle">Content Strategy, Executive Presence &amp; Messaging</p>
-            </div>
+            <h3 class="tile-title">Authority Distribution</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Building your industry presence through clear, high-authority corporate content engines that make your firm the definitive choice in your market.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">Content Strategy, Executive Presence &amp; Messaging</p>
+            <p class="tile-text">Building your industry presence through clear, high-authority corporate content engines that make your firm the definitive choice in your market.</p>
+          </div>
         </div>
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">Lifecycle Automation</h3>
-              <p class="tile-subtitle">CRM Engines, Advanced Data Flows &amp; Retention</p>
-            </div>
+            <h3 class="tile-title">Lifecycle Automation</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Structuring advanced CRM systems and automated follow-up workflows to eliminate lead leakage and streamline client onboarding.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">CRM Engines, Advanced Data Flows &amp; Retention</p>
+            <p class="tile-text">Structuring advanced CRM systems and automated follow-up workflows to eliminate lead leakage and streamline client onboarding.</p>
+          </div>
         </div>
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">AI Protocol Deployment</h3>
-              <p class="tile-subtitle">SEO Search Foundations &amp; Practical AI Workflows</p>
-            </div>
+            <h3 class="tile-title">AI Protocol Deployment</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Building your organic search visibility while deploying practical internal artificial intelligence tools to cut down operational labor costs.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">SEO Search Foundations &amp; Practical AI Workflows</p>
+            <p class="tile-text">Building your organic search visibility while deploying practical internal artificial intelligence tools to cut down operational labor costs.</p>
+          </div>
         </div>
         <div class="tile reveal-fade">
           <div class="tile-header" role="button" tabindex="0" aria-expanded="false">
-            <div class="tile-heading-group">
-              <h3 class="tile-title">Strategic Advisory</h3>
-              <p class="tile-subtitle">Category Positioning, Market Clarification &amp; Capital Direction</p>
-            </div>
+            <h3 class="tile-title">Strategic Advisory</h3>
             <span class="tile-toggle-icon" aria-hidden="true"></span>
           </div>
-          <p class="tile-text">Private, high-level counsel with Ritesh to restructure your market positioning, maximize company leverage, and align your enterprise roadmap.</p>
+          <div class="tile-body">
+            <p class="tile-subtitle">Category Positioning, Market Clarification &amp; Capital Direction</p>
+            <p class="tile-text">Private, high-level counsel with Ritesh to restructure your market positioning, maximize company leverage, and align your enterprise roadmap.</p>
+          </div>
         </div>
       </div>
 
@@ -2058,10 +2179,9 @@ img{display:block;max-width:100%;}
 
         <p class="body-text reveal-fade">
           Watts Growth Labs sits within the broader Watts Group ecosystem — an AI-first
-          Canadian consulting and investment group bringing together strategy, technology,
-          capital, media, and community. Growth Labs is the human-led partnership layer:
-          strategic judgment, positioning, and visibility, strengthened by AI where it creates
-          real leverage.
+          Canadian consulting and investment group spanning strategy, technology, capital,
+          media, and community. Growth Labs is the human-led partnership layer: strategic
+          judgment, positioning, and visibility, strengthened by AI where it creates leverage.
         </p>
 
         <p class="ecosystem-proof reveal-fade">This allows aligned partners to engage not only at the level of advice, but through a wider ecosystem of capabilities, relationships, and opportunities shaped around long-term growth.</p>
@@ -2100,9 +2220,8 @@ img{display:block;max-width:100%;}
         <h2 class="section-title mask"><span class="line">Access begins with a request.</span></h2>
 
         <p class="body-text reveal-fade">
-          A short application helps our team understand fit, direction, and context. If aligned,
-          the next step is a brief conversation to explore timing, scope, and the most
-          appropriate pathway into partnership.
+          A short application helps our team understand fit and direction. If aligned, the next
+          step is a brief conversation to explore the right pathway into partnership.
         </p>
       </div>
 
@@ -2516,6 +2635,32 @@ document.querySelectorAll('.tile-header').forEach((header) => {
   });
 });
 
+/* ===================== FIT-CARD ACCORDION (mobile) ===================== */
+// Same pattern as the tile accordion — Who This Is For's 4 list rows collapse
+// their description below 767px, tap the title header to expand.
+document.querySelectorAll('.fit-card-header').forEach((header) => {
+  const toggle = () => {
+    const card = header.closest('.fit-card');
+    const grid = header.closest('.fit-grid');
+    const wasOpen = card.classList.contains('fit-open');
+    grid.querySelectorAll('.fit-card.fit-open').forEach((openCard) => {
+      openCard.classList.remove('fit-open');
+      openCard.querySelector('.fit-card-header').setAttribute('aria-expanded', 'false');
+    });
+    if (!wasOpen) {
+      card.classList.add('fit-open');
+      header.setAttribute('aria-expanded', 'true');
+    }
+  };
+  header.addEventListener('click', toggle);
+  header.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggle();
+    }
+  });
+});
+
 /* ===================== FAQ ACCORDION (all screen sizes) ===================== */
 // Exclusive: opening one question closes whichever other question was open.
 document.querySelectorAll('.faq-question').forEach((question) => {
@@ -2683,14 +2828,120 @@ function scaleTransition(leaving, entering, leavingIndex, index, finish) {
   tl.to(entering, { scale: 1, opacity: 1, borderRadius: '0px', duration: d * 0.62, ease: 'power3.out' }, d * 0.42);
 }
 
+/* ---- transition: cross-dissolve ---- */
+function crossDissolveTransition(leaving, entering, leavingIndex, index, finish) {
+  const d = prefersReducedMotion ? 0.01 : DUR;
+
+  gsap.set(leaving, { opacity: 1, scale: 1, zIndex: slides.length + 1 });
+  gsap.set(entering, { opacity: 0, scale: 1, zIndex: slides.length + 2 });
+
+  gsap.timeline({
+    onComplete: () => {
+      gsap.set(leaving, { opacity: 0, zIndex: leavingIndex + 1 });
+      gsap.set(entering, { zIndex: index + 1 });
+      finish();
+    },
+  })
+    .to(entering, { opacity: 1, duration: d, ease: 'power1.inOut' }, 0)
+    .to(leaving, { opacity: 0, duration: d, ease: 'power1.inOut' }, 0);
+}
+
+/* ---- transition: depth push (parallax zoom) ---- */
+function depthPushTransition(leaving, entering, leavingIndex, index, finish) {
+  const d = prefersReducedMotion ? 0.01 : DUR;
+
+  gsap.set(leaving, { scale: 1, opacity: 1, zIndex: slides.length + 1 });
+  gsap.set(entering, { scale: 1.15, opacity: 0, zIndex: slides.length + 2 });
+
+  gsap.timeline({
+    onComplete: () => {
+      gsap.set(leaving, { scale: 1, opacity: 0, zIndex: leavingIndex + 1 });
+      gsap.set(entering, { scale: 1, zIndex: index + 1 });
+      finish();
+    },
+  })
+    .to(leaving, { scale: 0.85, opacity: 0, duration: d * 0.55, ease: 'power2.in' }, 0)
+    .to(entering, { scale: 1, opacity: 1, duration: d * 0.65, ease: 'power3.out' }, d * 0.3);
+}
+
+/* ---- transition: blinds reveal ---- */
+function blindsTransition(leaving, entering, leavingIndex, index, finish) {
+  const d = prefersReducedMotion ? 0.01 : DUR;
+  const strips = document.querySelectorAll('#blinds .blind-strip');
+
+  gsap.set(leaving, { opacity: 1, scale: 1, zIndex: slides.length + 1 });
+  gsap.set(entering, { opacity: 0, scale: 1, zIndex: slides.length + 1 });
+  gsap.set(strips, { yPercent: -100 });
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.set(leaving, { opacity: 0, zIndex: leavingIndex + 1 });
+      gsap.set(entering, { zIndex: index + 1 });
+      finish();
+    },
+  });
+  tl.to(strips, { yPercent: 0, duration: d * 0.32, ease: 'power2.in', stagger: 0.045 });
+  tl.set(leaving, { opacity: 0 });
+  tl.set(entering, { opacity: 1 });
+  tl.to(strips, { yPercent: 100, duration: d * 0.32, ease: 'power3.out', stagger: 0.045 });
+}
+
+/* ---- transition: split doors ---- */
+function splitDoorsTransition(leaving, entering, leavingIndex, index, finish) {
+  const d = prefersReducedMotion ? 0.01 : DUR;
+  const left = document.querySelector('#split-doors .split-panel-left');
+  const right = document.querySelector('#split-doors .split-panel-right');
+
+  gsap.set(leaving, { opacity: 1, scale: 1, zIndex: slides.length + 1 });
+  gsap.set(entering, { opacity: 0, scale: 1, zIndex: slides.length + 1 });
+  gsap.set(left, { xPercent: -100 });
+  gsap.set(right, { xPercent: 100 });
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.set(leaving, { opacity: 0, zIndex: leavingIndex + 1 });
+      gsap.set(entering, { zIndex: index + 1 });
+      finish();
+    },
+  });
+  tl.to([left, right], { xPercent: 0, duration: d * 0.42, ease: 'power2.in' });
+  tl.set(leaving, { opacity: 0 });
+  tl.set(entering, { opacity: 1 });
+  tl.to(left, { xPercent: -100, duration: d * 0.42, ease: 'power3.out' }, '<');
+  tl.to(right, { xPercent: 100, duration: d * 0.42, ease: 'power3.out' }, '<');
+}
+
+/* ---- transition: focus-pull blur ---- */
+function focusBlurTransition(leaving, entering, leavingIndex, index, finish) {
+  const d = prefersReducedMotion ? 0.01 : DUR;
+
+  gsap.set(leaving, { opacity: 1, scale: 1, filter: 'blur(0px)', zIndex: slides.length + 1 });
+  gsap.set(entering, { opacity: 0, scale: 1.03, filter: 'blur(18px)', zIndex: slides.length + 2 });
+
+  gsap.timeline({
+    onComplete: () => {
+      gsap.set(leaving, { opacity: 0, scale: 1, filter: 'blur(0px)', zIndex: leavingIndex + 1 });
+      gsap.set(entering, { scale: 1, filter: 'blur(0px)', zIndex: index + 1 });
+      finish();
+    },
+  })
+    .to(leaving, { opacity: 0, scale: 0.98, filter: 'blur(18px)', duration: d * 0.6, ease: 'power2.inOut' }, 0)
+    .to(entering, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: d * 0.7, ease: 'power2.out' }, d * 0.15);
+}
+
 function transitionFor(elA, elB) {
   const key = [elA.id, elB.id].sort().join('__');
   const special = {
     [[heroEl.id, inviteEl.id].sort().join('__')]: irisTransition,
-    [[ecosystemEl.id, finalEl.id].sort().join('__')]: flipTransition,
-    [[finalEl.id, footerEl.id].sort().join('__')]: scaleTransition,
+    [[whoForEl.id, partnershipEl.id].sort().join('__')]: curtainTransition,
+    [[partnershipEl.id, partnershipTilesEl.id].sort().join('__')]: depthPushTransition,
+    [[partnershipTilesEl.id, ecosystemEl.id].sort().join('__')]: blindsTransition,
+    [[ecosystemEl.id, processEl.id].sort().join('__')]: splitDoorsTransition,
+    [[processEl.id, finalEl.id].sort().join('__')]: scaleTransition,
+    [[finalEl.id, faqEl.id].sort().join('__')]: focusBlurTransition,
+    [[faqEl.id, footerEl.id].sort().join('__')]: flipTransition,
   };
-  return special[key] || curtainTransition;
+  return special[key] || crossDissolveTransition;
 }
 
 let formHighlightTimeout = null;
@@ -2746,7 +2997,7 @@ window.addEventListener('wheel', (e) => {
 
 let touchStartY = null;
 let touchStartOnInteractive = false;
-const INTERACTIVE_SELECTOR = 'a, button, .dot, iframe, input, textarea, select, [data-goto], .tile-header, .faq-question';
+const INTERACTIVE_SELECTOR = 'a, button, .dot, iframe, input, textarea, select, [data-goto], .tile-header, .faq-question, .fit-card-header';
 window.addEventListener('touchstart', (e) => {
   touchStartY = e.touches[0].clientY;
   touchStartOnInteractive = !!e.target.closest(INTERACTIVE_SELECTOR);
@@ -2816,6 +3067,12 @@ function setupSlides(preserveEl) {
 }
 
 setupSlides(heroEl);
+
+// Establish the blinds/split-doors hidden positions via GSAP from the start,
+// rather than via CSS — see the note on .blind-strip/.split-panel above.
+gsap.set('#blinds .blind-strip', { yPercent: -100 });
+gsap.set('#split-doors .split-panel-left', { xPercent: -100 });
+gsap.set('#split-doors .split-panel-right', { xPercent: 100 });
 
 /* ===================== PER-SLIDE ENTER ANIMATIONS (play once) ===================== */
 const visited = new Set();
